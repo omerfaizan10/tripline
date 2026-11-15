@@ -1,0 +1,8 @@
+{
+  "django__django-15103": {
+    "tests": [
+      "test_strip_tags (utils_tests.test_html.TestUtilsHtml)"
+    ],
+    "reason": "fail on the base commit and with the reference patch in this environment"
+  }
+}
