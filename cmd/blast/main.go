@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/omerfaizan10/blast-radius/internal/canary"
@@ -91,7 +92,9 @@ func cmdRun(args []string) error {
 	}
 	cmd := args[dash+1:]
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	// SIGTERM too: stopping a background job sends it, and the containers and
+	// network are only removed if the run unwinds normally.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	if *bin == "" {
 		*bin = filepath.Join("bin", "linux-"+sandbox.DockerArch(ctx))
