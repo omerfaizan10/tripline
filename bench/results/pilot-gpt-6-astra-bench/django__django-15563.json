@@ -1,0 +1,34 @@
+{
+  "instance_id": "django__django-15563",
+  "difficulty": "15 min - 1 hour",
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261115-112549-4b606e",
+  "wall_seconds": 126.4,
+  "agent_exit": 0,
+  "cost_usd": 0.7241,
+  "tokens_in": 284448,
+  "tokens_cached": 257687,
+  "tokens_out": 3976,
+  "model_requests": 14,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 4,
+  "test_patch_applied": true,
+  "resolved": true,
+  "fail_to_pass": {
+    "passed": 2,
+    "total": 2
+  },
+  "pass_to_pass": {
+    "passed": 29,
+    "total": 29
+  },
+  "not_ok": [],
+  "grade_seconds": 0.7,
+  "test_modules": [
+    "model_inheritance_regress.tests"
+  ]
+}
