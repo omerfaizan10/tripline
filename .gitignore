@@ -2,7 +2,6 @@
 /bin/
 .env
 .env.*
-!.env.example
 /bench/cache/
 __pycache__/
 # Bench results: keep the per-task JSON, not logs or grading scratch.
