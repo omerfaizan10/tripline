@@ -1,0 +1,50 @@
+{
+  "instance_id": "django__django-15503",
+  "difficulty": "1-4 hours",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261115-145434-ea9783",
+  "wall_seconds": 62.3,
+  "agent_exit": 0,
+  "cost_usd": 0.0057,
+  "tokens_in": 180330,
+  "tokens_cached": 160084,
+  "tokens_out": 4057,
+  "model_requests": 11,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 1,
+  "test_patch_applied": true,
+  "resolved": false,
+  "fail_to_pass": {
+    "passed": 2,
+    "total": 2
+  },
+  "pass_to_pass": {
+    "passed": 72,
+    "total": 78
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [
+    "test_key_transform_annotation_expression (model_fields.test_jsonfield.TestQuerying)",
+    "test_key_transform_expression (model_fields.test_jsonfield.TestQuerying)",
+    "test_nested_key_transform_annotation_expression (model_fields.test_jsonfield.TestQuerying)",
+    "test_nested_key_transform_expression (model_fields.test_jsonfield.TestQuerying)",
+    "test_nested_key_transform_on_subquery (model_fields.test_jsonfield.TestQuerying)",
+    "test_ordering_grouping_by_key_transform (model_fields.test_jsonfield.TestQuerying)"
+  ],
+  "not_ok": [
+    "test_key_transform_annotation_expression (model_fields.test_jsonfield.TestQuerying)",
+    "test_key_transform_expression (model_fields.test_jsonfield.TestQuerying)",
+    "test_nested_key_transform_annotation_expression (model_fields.test_jsonfield.TestQuerying)",
+    "test_nested_key_transform_expression (model_fields.test_jsonfield.TestQuerying)",
+    "test_nested_key_transform_on_subquery (model_fields.test_jsonfield.TestQuerying)",
+    "test_ordering_grouping_by_key_transform (model_fields.test_jsonfield.TestQuerying)"
+  ],
+  "grade_seconds": 0.7,
+  "test_modules": [
+    "model_fields.test_jsonfield"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "instance_id": "django__django-16950",
+  "difficulty": "15 min - 1 hour",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261115-190114-d6c0a2",
+  "wall_seconds": 86.6,
+  "agent_exit": 0,
+  "cost_usd": 0.0103,
+  "tokens_in": 416598,
+  "tokens_cached": 384936,
+  "tokens_out": 6492,
+  "model_requests": 18,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 3,
+  "test_patch_applied": true,
+  "resolved": false,
+  "fail_to_pass": {
+    "passed": 1,
+    "total": 1
+  },
+  "pass_to_pass": {
+    "passed": 2,
+    "total": 3
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [
+    "#24377 - Inlines with a model field default should ignore that default"
+  ],
+  "not_ok": [
+    "#24377 - Inlines with a model field default should ignore that default"
+  ],
+  "grade_seconds": 0.6,
+  "test_modules": [
+    "model_formsets.test_uuid"
+  ]
+}

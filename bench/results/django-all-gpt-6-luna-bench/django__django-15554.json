@@ -1,0 +1,80 @@
+{
+  "instance_id": "django__django-15554",
+  "difficulty": "15 min - 1 hour",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261115-150109-0e1a93",
+  "wall_seconds": 58.9,
+  "agent_exit": 0,
+  "cost_usd": 0.0052,
+  "tokens_in": 165581,
+  "tokens_cached": 144595,
+  "tokens_out": 3245,
+  "model_requests": 10,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 1,
+  "test_patch_applied": true,
+  "resolved": false,
+  "fail_to_pass": {
+    "passed": 0,
+    "total": 1
+  },
+  "pass_to_pass": {
+    "passed": 19,
+    "total": 41
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [
+    "filtered_relation() not only improves performance but also creates",
+    "test_aggregate (filtered_relation.tests.FilteredRelationAnalyticalAggregationTests)",
+    "test_as_subquery (filtered_relation.tests.FilteredRelationTests)",
+    "test_defer (filtered_relation.tests.FilteredRelationTests)",
+    "test_difference (filtered_relation.tests.FilteredRelationTests)",
+    "test_exclude_relation_with_join (filtered_relation.tests.FilteredRelationTests)",
+    "test_extra (filtered_relation.tests.FilteredRelationTests)",
+    "test_intersection (filtered_relation.tests.FilteredRelationTests)",
+    "test_multiple_times (filtered_relation.tests.FilteredRelationTests)",
+    "test_nested_chained_relations (filtered_relation.tests.FilteredRelationTests)",
+    "test_nested_m2m_filtered (filtered_relation.tests.FilteredRelationTests)",
+    "test_select_for_update (filtered_relation.tests.FilteredRelationTests)",
+    "test_union (filtered_relation.tests.FilteredRelationTests)",
+    "test_values (filtered_relation.tests.FilteredRelationTests)",
+    "test_values_list (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_exclude (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_generic_foreign_key (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_join (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_join_and_complex_condition (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_m2m_deep (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_m2m_multijoin (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_multiple_filter (filtered_relation.tests.FilteredRelationTests)"
+  ],
+  "not_ok": [
+    "filtered_relation() not only improves performance but also creates",
+    "test_aggregate (filtered_relation.tests.FilteredRelationAnalyticalAggregationTests)",
+    "test_as_subquery (filtered_relation.tests.FilteredRelationTests)",
+    "test_defer (filtered_relation.tests.FilteredRelationTests)",
+    "test_difference (filtered_relation.tests.FilteredRelationTests)",
+    "test_exclude_relation_with_join (filtered_relation.tests.FilteredRelationTests)",
+    "test_extra (filtered_relation.tests.FilteredRelationTests)",
+    "test_intersection (filtered_relation.tests.FilteredRelationTests)",
+    "test_multiple (filtered_relation.tests.FilteredRelationTests)",
+    "test_multiple_times (filtered_relation.tests.FilteredRelationTests)",
+    "test_nested_chained_relations (filtered_relation.tests.FilteredRelationTests)",
+    "test_nested_m2m_filtered (filtered_relation.tests.FilteredRelationTests)",
+    "test_select_for_update (filtered_relation.tests.FilteredRelationTests)",
+    "test_union (filtered_relation.tests.FilteredRelationTests)",
+    "test_values (filtered_relation.tests.FilteredRelationTests)",
+    "test_values_list (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_exclude (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_generic_foreign_key (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_join (filtered_relation.tests.FilteredRelationTests)",
+    "test_with_join_and_complex_condition (filtered_relation.tests.FilteredRelationTests)"
+  ],
+  "grade_seconds": 0.7,
+  "test_modules": [
+    "filtered_relation.tests"
+  ]
+}

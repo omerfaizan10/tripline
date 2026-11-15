@@ -1,0 +1,39 @@
+{
+  "instance_id": "django__django-15629",
+  "difficulty": "1-4 hours",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261115-150617-3a94a3",
+  "wall_seconds": 65.7,
+  "agent_exit": 0,
+  "cost_usd": 0.0075,
+  "tokens_in": 311595,
+  "tokens_cached": 282278,
+  "tokens_out": 3418,
+  "model_requests": 14,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 2,
+  "test_patch_applied": true,
+  "resolved": false,
+  "fail_to_pass": {
+    "passed": 1,
+    "total": 2
+  },
+  "pass_to_pass": {
+    "passed": 115,
+    "total": 115
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [],
+  "not_ok": [
+    "AlterField operation of db_collation on primary keys changes any FKs"
+  ],
+  "grade_seconds": 1.1,
+  "test_modules": [
+    "migrations.test_base",
+    "migrations.test_operations"
+  ]
+}

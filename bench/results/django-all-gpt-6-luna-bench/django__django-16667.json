@@ -1,0 +1,39 @@
+{
+  "instance_id": "django__django-16667",
+  "difficulty": "15 min - 1 hour",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261115-185517-6c136b",
+  "wall_seconds": 17.7,
+  "agent_exit": 0,
+  "cost_usd": 0.002,
+  "tokens_in": 57578,
+  "tokens_cached": 45183,
+  "tokens_out": 573,
+  "model_requests": 5,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 1,
+  "test_patch_applied": true,
+  "resolved": false,
+  "fail_to_pass": {
+    "passed": 1,
+    "total": 2
+  },
+  "pass_to_pass": {
+    "passed": 24,
+    "total": 24
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [],
+  "not_ok": [
+    "test_value_from_datadict (forms_tests.widget_tests.test_selectdatewidget.SelectDateWidgetTest.test_value_from_datadict)"
+  ],
+  "grade_seconds": 0.7,
+  "test_modules": [
+    "forms_tests.field_tests.test_datefield",
+    "forms_tests.widget_tests.test_selectdatewidget"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "instance_id": "django__django-16631",
+  "difficulty": "1-4 hours",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261115-185132-edeb2c",
+  "wall_seconds": 73.8,
+  "agent_exit": 0,
+  "cost_usd": 0.007,
+  "tokens_in": 193964,
+  "tokens_cached": 169785,
+  "tokens_out": 5736,
+  "model_requests": 11,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 2,
+  "test_patch_applied": true,
+  "resolved": false,
+  "fail_to_pass": {
+    "passed": 0,
+    "total": 1
+  },
+  "pass_to_pass": {
+    "passed": 12,
+    "total": 12
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [],
+  "not_ok": [
+    "test_get_user_fallback_secret (auth_tests.test_basic.TestGetUser.test_get_user_fallback_secret)"
+  ],
+  "grade_seconds": 0.8,
+  "test_modules": [
+    "auth_tests.test_basic"
+  ]
+}
