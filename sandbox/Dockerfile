@@ -10,6 +10,14 @@ RUN apt-get update \
 # Python environment for benchmark tasks (Django 4.1 to 5.0 run from source).
 RUN python3 -m venv /opt/venv \
  && /opt/venv/bin/pip install --no-cache-dir asgiref==3.8.1 sqlparse==0.5.1 tzdata==2024.2 \
+ # Optional test dependencies from Django's tests/requirements/py3.txt, as the
+ # SWE-bench harness installs them; without them tests are skipped and graded
+ # as not passing. Left out: pylibmc and pywatchman (need system libraries)
+ # and black (reformats makemigrations output).
+ && /opt/venv/bin/pip install --no-cache-dir \
+      Jinja2==3.1.4 Pillow==10.4.0 PyYAML==6.0.2 numpy==1.26.4 argon2-cffi==23.1.0 \
+      bcrypt==4.2.0 docutils==0.21.2 tblib==3.0.0 pymemcache==4.0.0 redis==5.0.8 \
+      geoip2==4.8.0 selenium==4.25.0 aiosmtpd==1.4.6 \
  && chmod -R a+rX /opt/venv
 ENV PATH=/opt/venv/bin:$PATH
 

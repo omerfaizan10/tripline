@@ -32,6 +32,10 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "bench" / "data" / "swe_bench_verified.json"
 CACHE = ROOT / "bench" / "cache"
 RESULTS = ROOT / "bench" / "results"
+# PASS_TO_PASS tests that fail in this environment on the base commit AND with
+# the reference patch (e.g. a Python stdlib security fix changed behaviour).
+# Written by `gold`; such tests cannot be pass-to-pass here, so grading skips them.
+ENV_EXCLUDED = ROOT / "bench" / "data" / "env_excluded.json"
 IMAGE = "blast-sandbox:dev"
 VERSIONS = {"4.1", "4.2", "5.0"}
 
@@ -146,6 +150,8 @@ def apply_patch(patch: Path, tree: Path) -> str | None:
     A ceiling stops git from finding the parent repo, and every file the patch
     names must be reported as applied."""
     import os
+    # Absolute paths: git runs with cwd=tree, and it ignores a relative ceiling.
+    patch, tree = patch.resolve(), tree.resolve()
     env = {**os.environ, "GIT_CEILING_DIRECTORIES": str(tree.parent)}
     ap = subprocess.run(["git", "apply", "--verbose", "--whitespace=nowarn", str(patch)],
                         cwd=tree, text=True, capture_output=True, env=env)
@@ -158,8 +164,17 @@ def apply_patch(patch: Path, tree: Path) -> str | None:
     return None
 
 
-def grade(row: dict, work: Path, out_dir: Path) -> dict:
-    """Apply the hidden tests to the agent's tree and run them in a plain container."""
+def env_excluded() -> dict[str, dict]:
+    return json.loads(ENV_EXCLUDED.read_text()) if ENV_EXCLUDED.exists() else {}
+
+
+def grade(row: dict, work: Path, out_dir: Path, exclude: set[str] | None = None) -> dict:
+    """Apply the hidden tests to the agent's tree and run them in a plain container.
+
+    exclude: PASS_TO_PASS tests to skip; None means the recorded env exclusions."""
+    if exclude is None:
+        exclude = set(env_excluded().get(row["instance_id"], {}).get("tests", []))
+    work, out_dir = work.resolve(), out_dir.resolve()  # docker -v needs absolute paths
     g = out_dir / "grade_tree"
     if g.exists():
         shutil.rmtree(g)
@@ -183,6 +198,10 @@ def grade(row: dict, work: Path, out_dir: Path) -> dict:
     out = run.stdout + run.stderr
     (out_dir / "grade.log").write_text(out)
     got = parse_results(out)
+    if not got:
+        result.update(resolved=False, error="no test results (container failed?): " + out[-500:])
+        shutil.rmtree(g)
+        return result
 
     def status(t: str) -> str:
         l = label(t)
@@ -191,11 +210,13 @@ def grade(row: dict, work: Path, out_dir: Path) -> dict:
         return got.get("doc:" + t.strip(), "missing")
 
     f2p_s = {t: status(t) for t in f2p}
-    p2p_s = {t: status(t) for t in p2p}
+    p2p_s = {t: status(t) for t in p2p if t not in exclude}
     result.update(
         resolved=all(v == "ok" for v in f2p_s.values()) and all(v in ("ok", "skip") for v in p2p_s.values()),
         fail_to_pass={"passed": sum(v == "ok" for v in f2p_s.values()), "total": len(f2p)},
-        pass_to_pass={"passed": sum(v in ("ok", "skip") for v in p2p_s.values()), "total": len(p2p)},
+        pass_to_pass={"passed": sum(v in ("ok", "skip") for v in p2p_s.values()), "total": len(p2p_s)},
+        env_excluded=len(p2p) - len(p2p_s),
+        p2p_not_ok=sorted(t for t, v in p2p_s.items() if v not in ("ok", "skip")),
         not_ok=sorted([t for t, v in {**f2p_s, **p2p_s}.items() if v not in ("ok", "skip")])[:20],
         grade_seconds=round(time.time() - t0, 1),
         test_modules=modules,
@@ -270,26 +291,38 @@ def cmd_run(a) -> None:
 
 def cmd_gold(a) -> None:
     """Grader self-check, no agent: the base commit must grade unresolved and
-    the benchmark's reference patch must grade resolved."""
+    the benchmark's reference patch must grade resolved. PASS_TO_PASS tests
+    that fail on both are environment-broken: they are recorded in
+    ENV_EXCLUDED and the task passes if nothing else fails."""
     rows = load()
     ids = [l.strip() for l in Path(a.set).read_text().splitlines() if l.strip() and not l.startswith("#")]
     out_root = RESULTS / "_gold"
     out_root.mkdir(parents=True, exist_ok=True)
     ok = True
+    excl = env_excluded()
     for iid in ids:
         row = rows[iid]
         task = CACHE / "work" / iid
         checkout(row, task)
-        base = grade(row, task, out_root)
+        base = grade(row, task, out_root, exclude=set())
         (task / "gold.patch").write_text(row["patch"])
         sh(["git", "apply", "gold.patch"], cwd=task)
         (task / "gold.patch").unlink()
-        gold = grade(row, task, out_root)
+        gold = grade(row, task, out_root, exclude=set())
+        broken = sorted(set(base.get("p2p_not_ok", [])) & set(gold.get("p2p_not_ok", [])))
+        excl.pop(iid, None)
+        if broken and gold.get("fail_to_pass", {}).get("passed") == gold.get("fail_to_pass", {}).get("total") \
+                and set(gold.get("p2p_not_ok", [])) <= set(broken):
+            excl[iid] = {"tests": broken, "reason": "fail on the base commit and with the reference patch in this environment"}
+            gold = grade(row, task, out_root, exclude=set(broken))
+            gold["env_excluded_tests"] = broken
         good = base.get("resolved") is False and gold.get("resolved") is True
         ok &= good
         print(f"{'OK ' if good else 'BAD'} {iid}  base={base.get('resolved')} F2P {base.get('fail_to_pass')}  "
               f"gold={gold.get('resolved')} F2P {gold.get('fail_to_pass')} P2P {gold.get('pass_to_pass')}"
+              + (f"  env_excluded={gold['env_excluded_tests']}" if gold.get("env_excluded_tests") else "")
               + (f"  not_ok={gold.get('not_ok') or gold.get('error')}" if not gold.get("resolved") else ""), flush=True)
+        ENV_EXCLUDED.write_text(json.dumps(dict(sorted(excl.items())), indent=2) + "\n")
     sys.exit(0 if ok else 1)
 
 
