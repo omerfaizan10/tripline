@@ -1,0 +1,39 @@
+# Benchmark policy: the default policy without GitHub. On SWE-bench tasks the
+# upstream fix is public on github.com, so an agent that can reach it can copy
+# the answer instead of solving the issue. Package registries stay open.
+version: 1
+name: bench
+mode: enforce
+filesystem:
+  read:
+    - /usr
+    - /lib
+    - /bin
+    - /sbin
+    - /etc
+    - /proc
+    - /sys
+    - /opt
+    - ${HOME}/.gitconfig
+  write:
+    - ${WORKSPACE}
+    - /tmp
+    - /dev
+    - ${HOME}/.cache
+    - ${HOME}/.npm
+    - ${HOME}/.local
+    - ${HOME}/.config/git
+    - ${HOME}/.codex
+network:
+  allow_hosts:
+    - pypi.org
+    - files.pythonhosted.org
+    - registry.npmjs.org
+exec:
+  flag:
+    - curl
+    - wget
+    - nc
+    - ncat
+    - ssh
+    - scp
