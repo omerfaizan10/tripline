@@ -5,4 +5,10 @@
 !.env.example
 /bench/cache/
 __pycache__/
+# Bench results: keep the per-task JSON, not logs or grading scratch.
+/bench/results/_gold/
+/bench/results/one-*/
+/bench/results/*/*.log
+/bench/results/*/test.patch
+/bench/results/*/grade_tree/
 /vault/
