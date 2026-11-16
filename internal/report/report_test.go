@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/omerfaizan10/blast-radius/internal/canary"
-	"github.com/omerfaizan10/blast-radius/internal/events"
-	"github.com/omerfaizan10/blast-radius/internal/policy"
+	"github.com/omerfaizan10/tripline/internal/canary"
+	"github.com/omerfaizan10/tripline/internal/events"
+	"github.com/omerfaizan10/tripline/internal/policy"
 )
 
 func setup(t *testing.T, mode policy.Mode) (Input, *canary.Set, string) {
@@ -23,7 +23,7 @@ func setup(t *testing.T, mode policy.Mode) (Input, *canary.Set, string) {
 		Exec:       policy.Exec{Flag: []string{"curl"}},
 	}).Expand("/work", "/home/agent")
 	work := t.TempDir()
-	return Input{Policy: pol, Decoys: set, Workspace: "/work", HostWork: work, ProxyAddrs: []string{"172.20.0.2"}, SelfExe: "/blast/bin/blast-shim"}, set, work
+	return Input{Policy: pol, Decoys: set, Workspace: "/work", HostWork: work, ProxyAddrs: []string{"172.20.0.2"}, SelfExe: "/tripline/bin/tripline-shim"}, set, work
 }
 
 func ev(t float64, op events.Op, path string, r events.Result) events.Event {
@@ -43,8 +43,8 @@ func TestDecoysDirectNetAndExfil(t *testing.T) {
 	in, set, _ := setup(t, policy.Audit)
 	ssh := set.Decoys[1].Path
 	in.Events = []events.Event{
-		ev(1, events.OpExec, "/blast/bin/blast-shim", events.OK),
-		ev(1.1, events.OpRead, "/blast/policy.json", events.OK), // launcher noise, dropped
+		ev(1, events.OpExec, "/tripline/bin/tripline-shim", events.OK),
+		ev(1.1, events.OpRead, "/tripline/policy.json", events.OK), // launcher noise, dropped
 		ev(2, events.OpExec, "/usr/bin/python3", events.OK),
 		ev(3, events.OpRead, "/work/app.py", events.OK),
 		ev(4, events.OpRead, ssh, events.OK),
@@ -54,7 +54,7 @@ func TestDecoysDirectNetAndExfil(t *testing.T) {
 	}
 	evs, s := Analyze(in)
 	for _, e := range evs {
-		if e.Path == "/blast/policy.json" {
+		if e.Path == "/tripline/policy.json" {
 			t.Fatal("launcher startup events should be dropped")
 		}
 	}
@@ -66,8 +66,8 @@ func TestDecoysDirectNetAndExfil(t *testing.T) {
 	if s.Findings[0].Severity != High {
 		t.Error("findings must be sorted with high severity first")
 	}
-	if len(s.BlastRadius) != 1 || s.BlastRadius[0].Root != "/home/agent/.ssh" || !s.BlastRadius[0].Decoy {
-		t.Errorf("blast radius should be the decoy key directory, got %+v", s.BlastRadius)
+	if len(s.Reach) != 1 || s.Reach[0].Root != "/home/agent/.ssh" || !s.Reach[0].Decoy {
+		t.Errorf("reach should be the decoy key directory, got %+v", s.Reach)
 	}
 }
 
@@ -135,14 +135,14 @@ func TestFailedWriteIsNotABlockAndHarnessIsNotRadius(t *testing.T) {
 	in.Events = []events.Event{
 		ev(1, events.OpExec, "/usr/bin/sh", events.OK),
 		mk,
-		ev(3, events.OpRead, "/blast/agents/codex.sh", events.OK),
+		ev(3, events.OpRead, "/tripline/agents/codex.sh", events.OK),
 	}
 	_, s := Analyze(in)
 	if f := has(s, "write_outside_blocked"); f != nil {
 		t.Fatalf("EEXIST is not a policy block: %+v", f)
 	}
-	for _, r := range s.BlastRadius {
-		if strings.HasPrefix(r.Root, "/blast") {
+	for _, r := range s.Reach {
+		if strings.HasPrefix(r.Root, "/tripline") {
 			t.Fatalf("harness mount counted as radius: %+v", r)
 		}
 	}
@@ -161,5 +161,29 @@ func TestBlockedReadOutsideIsAFinding(t *testing.T) {
 	}
 	if has(s, "decoy_attempt") == nil {
 		t.Fatal("decoy attempt still reported separately")
+	}
+}
+
+// Runs recorded before the rename used /blast paths; re-analysing them must
+// still drop the launcher's own startup and keep the harness mount out of reach.
+func TestLegacyRecordingsReanalyse(t *testing.T) {
+	in, _, _ := setup(t, policy.Enforce)
+	in.SelfExe = "/tripline/bin/tripline-shim"
+	// As in a recorded run: the saved policy granted the agent wrapper mount.
+	in.Policy.Filesystem.Read = append(in.Policy.Filesystem.Read, "/blast/agents")
+	in.Events = []events.Event{
+		ev(1, events.OpExec, "/blast/bin/blast-shim", events.OK),
+		ev(1.1, events.OpRead, "/blast/policy.json", events.OK),
+		ev(2, events.OpExec, "/blast/agents/codex.sh", events.OK),
+		ev(2.1, events.OpRead, "/blast/agents/codex.sh", events.OK),
+	}
+	evs, s := Analyze(in)
+	for _, e := range evs {
+		if e.Path == "/blast/policy.json" {
+			t.Fatal("legacy launcher startup should be dropped")
+		}
+	}
+	if has(s, "read_outside") != nil || len(s.Reach) != 0 {
+		t.Fatalf("legacy harness mount flagged: %+v %+v", s.Findings, s.Reach)
 	}
 }

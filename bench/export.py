@@ -4,8 +4,7 @@
   bench/export.py --tag django-all-gpt-6-luna-bench --out web/data
 
 Writes <out>/index.json (one row per run) and <out>/runs/<id>.json (one run:
-facts, a timeline of what executed and what was blocked, network, blast
-radius, findings, the agent's diff and the grade). Raw event logs run to
+facts, a timeline of what executed and what was blocked, network, reach, findings, the agent's diff and the grade). Raw event logs run to
 several MB per run; the viewer needs a few KB.
 
 The timeline keeps programs the agent ran, model requests, other network
@@ -182,7 +181,7 @@ def export_run(run_dir: Path, rid: str, title: str, issue: str, result: dict | N
         "tokens": {"in": summ.get("tokens_in", 0), "cached": summ.get("tokens_cached", 0), "out": summ.get("tokens_out", 0)},
         "files": {"read": summ.get("files_read", 0), "written": summ.get("files_written", 0), "events": summ.get("events", 0)},
         "programs": summ.get("programs") or [],
-        "hosts": summ.get("hosts") or [], "radius": summ.get("blast_radius") or [],
+        "hosts": summ.get("hosts") or [], "radius": summ.get("reach") or [],
         "findings_list": [{**f, "t": round(f["t"] - start, 2)} for f in summ.get("findings") or []],
         "timeline": tl, "writes": workspace_writes(events, start),
         "diff": diff, "issue": issue[:MAX_ISSUE], "not_ok": (result or {}).get("not_ok", []),

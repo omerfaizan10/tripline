@@ -1,4 +1,4 @@
-/* Blast Radius viewer. Reference: a printed incident report that rebuilds
+/* Tripline viewer. Reference: a printed incident report that rebuilds
    what happened second by second. Signature: the mono timestamp gutter with a
    thin time rule; red appears only where something was blocked. */
 
@@ -770,6 +770,161 @@ footer {
   color: var(--ink-2);
 }
 
+/* ---------- explainer ---------- */
+
+.prose p,
+.prose li {
+  max-width: 70ch;
+  color: var(--ink-2);
+}
+
+.prose p {
+  margin: 12px 0 0;
+}
+
+.prose ul {
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.prose li {
+  margin: 8px 0;
+}
+
+.prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 0 4px;
+  overflow-wrap: anywhere;
+}
+
+.dg {
+  margin: 24px 0 0;
+}
+
+.dg-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) 72px minmax(0, 1.2fr) 72px minmax(0, 0.9fr);
+  align-items: stretch;
+}
+
+.dg-box {
+  border: 1px solid var(--ink);
+  background: var(--surface);
+  padding: 12px 14px;
+  font-size: 13px;
+}
+
+.dg-box.dg-outer {
+  border-style: solid;
+  border-color: var(--rule-strong);
+  background: transparent;
+}
+
+.dg-title {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.dg-box ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dg-box li {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-2);
+  padding: 4px 0;
+  border-top: 1px solid var(--rule);
+  margin: 0;
+  max-width: none;
+}
+
+.dg-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--ink-2);
+  font-size: 20px;
+  text-align: center;
+}
+
+.dg-arrow small {
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.2;
+}
+
+.dg-a-v {
+  display: none;
+}
+
+.dg-blocked {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--accent);
+  background: var(--accent-wash);
+  padding: 8px 12px;
+}
+
+.dg-x {
+  flex: none;
+  width: 14px;
+  height: 2px;
+  background: var(--accent);
+  transform: translateY(-3px);
+}
+
+.dg-after {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--ink-2);
+  border-left: 2px solid var(--ink);
+  padding-left: 12px;
+}
+
+.modes {
+  margin: 16px 0 0;
+  max-width: 70ch;
+}
+
+.modes div {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.modes dt {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.modes dd {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 15px;
+}
+
 /* ---------- phones ---------- */
 
 @media (max-width: 720px) {
@@ -844,6 +999,29 @@ footer {
 
   .kpis {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .dg-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dg-arrow {
+    flex-direction: row;
+    padding: 6px 0;
+    gap: 8px;
+  }
+
+  .dg-a-h {
+    display: none;
+  }
+
+  .dg-a-v {
+    display: inline;
+  }
+
+  .modes div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
   }
 
   .meters th {

@@ -1,4 +1,4 @@
-// Package policy defines Blast Radius policies: what a coding agent may read,
+// Package policy defines Tripline policies: what a coding agent may read,
 // write and reach over the network, and how strictly that is applied.
 //
 // Policies are deny-by-default allowlists. In enforce and ask modes the file

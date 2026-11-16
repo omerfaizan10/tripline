@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Run coding agents on SWE-bench Verified tasks inside Blast Radius and grade them.
+"""Run coding agents on SWE-bench Verified tasks inside Tripline and grade them.
 
 For each task:
   1. check out the repository at the issue's base commit (from a local mirror);
-  2. give the agent the issue text through `blast run` (sandboxed, recorded);
+  2. give the agent the issue text through `tripline run` (sandboxed, recorded);
   3. grade in a separate plain container: apply the benchmark's hidden tests to
      the agent's final tree and run FAIL_TO_PASS (must now pass) and
      PASS_TO_PASS (must keep passing), the same criteria SWE-bench uses.
@@ -36,7 +36,7 @@ RESULTS = ROOT / "bench" / "results"
 # the reference patch (e.g. a Python stdlib security fix changed behaviour).
 # Written by `gold`; such tests cannot be pass-to-pass here, so grading skips them.
 ENV_EXCLUDED = ROOT / "bench" / "data" / "env_excluded.json"
-IMAGE = "blast-sandbox:dev"
+IMAGE = "tripline-sandbox:dev"
 VERSIONS = {"4.1", "4.2", "5.0"}
 
 PROMPT = """You are working in a checkout of the {repo} repository at /work.
@@ -262,18 +262,18 @@ def cmd_run(a) -> None:
         name = f"{tag}:{iid}"
         print(f"== {iid} ({row['difficulty']})", flush=True)
         t0 = time.time()
-        blast = subprocess.run(
-            [str(ROOT / "bin" / "blast"), "run", "--policy", a.policy, "--task", str(task), "--name", name,
-             "--timeout", a.timeout, "--env", f"BLAST_MODEL={a.model}", "--env", f"BLAST_EFFORT={a.effort}",
+        tl = subprocess.run(
+            [str(ROOT / "bin" / "tripline"), "run", "--policy", a.policy, "--task", str(task), "--name", name,
+             "--timeout", a.timeout, "--env", f"TRIPLINE_MODEL={a.model}", "--env", f"TRIPLINE_EFFORT={a.effort}",
              "--env", "PYTHONPATH=/work",
-             "--", "/blast/agents/codex.sh", prompt],
+             "--", "/tripline/agents/codex.sh", prompt],
             cwd=ROOT, text=True, capture_output=True,
         )
         wall = time.time() - t0
         run_dir = latest_run(name)
-        (out_root / f"{iid}.blast.log").write_text(blast.stdout[-20000:] + "\n--- stderr\n" + blast.stderr[-20000:])
+        (out_root / f"{iid}.tripline.log").write_text(tl.stdout[-20000:] + "\n--- stderr\n" + tl.stderr[-20000:])
         if run_dir is None:
-            print(f"   blast failed: {blast.stderr[-400:]}")
+            print(f"   tripline failed: {tl.stderr[-400:]}")
             continue
         summary = json.loads((run_dir / "summary.json").read_text())
         g = grade(row, run_dir / "work", out_root)

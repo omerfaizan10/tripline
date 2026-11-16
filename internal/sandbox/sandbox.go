@@ -21,16 +21,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/omerfaizan10/blast-radius/internal/canary"
-	"github.com/omerfaizan10/blast-radius/internal/events"
-	"github.com/omerfaizan10/blast-radius/internal/policy"
-	"github.com/omerfaizan10/blast-radius/internal/report"
+	"github.com/omerfaizan10/tripline/internal/canary"
+	"github.com/omerfaizan10/tripline/internal/events"
+	"github.com/omerfaizan10/tripline/internal/policy"
+	"github.com/omerfaizan10/tripline/internal/report"
 )
 
 const (
 	sandboxWork = "/work"
 	sandboxHome = "/home/agent"
-	shimPath    = "/blast/bin/blast-shim"
+	shimPath    = "/tripline/bin/tripline-shim"
 )
 
 // Options configure a run.
@@ -40,8 +40,8 @@ type Options struct {
 	Cmd        []string // agent command, run inside the sandbox
 	Image      string
 	RunsDir    string
-	BinDir     string            // holds linux blast-shim and blast-proxy
-	AgentDir   string            // mounted read-only at /blast/agents ("" = none)
+	BinDir     string            // holds linux tripline-shim and tripline-proxy
+	AgentDir   string            // mounted read-only at /tripline/agents ("" = none)
 	Name       string            // label for the run
 	AgentEnv   map[string]string // extra environment for the agent
 	ModelKey   string            // real API key, given to the proxy only
@@ -91,7 +91,7 @@ func Run(ctx context.Context, o Options) (string, *report.Summary, error) {
 	if o.AgentDir != "" {
 		// The agent's launch scripts must be readable inside the sandbox; the
 		// grant is added to the run's policy so it shows up in policy.json.
-		exp.Filesystem.Read = append(exp.Filesystem.Read, "/blast/agents")
+		exp.Filesystem.Read = append(exp.Filesystem.Read, "/tripline/agents")
 	}
 
 	id := newID()
@@ -135,16 +135,16 @@ func Run(ctx context.Context, o Options) (string, *report.Summary, error) {
 	if err := writeJSON(filepath.Join(dir, "policy.json"), exp); err != nil {
 		return dir, nil, err
 	}
-	for _, b := range []string{"blast-shim", "blast-proxy"} {
+	for _, b := range []string{"tripline-shim", "tripline-proxy"} {
 		if err := copyFile(filepath.Join(o.BinDir, b), filepath.Join(dir, "bin", b), 0o755); err != nil {
 			return dir, nil, fmt.Errorf("missing %s in %s (run make linux): %w", b, o.BinDir, err)
 		}
 	}
 
 	meta := Meta{ID: id, Name: o.Name, Cmd: o.Cmd, Policy: o.PolicyFile, Mode: pol.Mode, Image: o.Image}
-	net := "blast-" + id
-	proxyName := "blast-proxy-" + id
-	agentName := "blast-agent-" + id
+	net := "tripline-" + id
+	proxyName := "tripline-proxy-" + id
+	agentName := "tripline-agent-" + id
 	cleanup := func() {
 		_ = docker(context.Background(), nil, "stop", "-t", "5", proxyName)
 		_ = docker(context.Background(), nil, "rm", "-f", agentName, proxyName)
@@ -157,9 +157,9 @@ func Run(ctx context.Context, o Options) (string, *report.Summary, error) {
 	}
 	proxyArgs := []string{"run", "-d", "--name", proxyName, "--network", "bridge",
 		"-p", "127.0.0.1::8090",
-		"-v", dir + ":/blast:ro", "-v", filepath.Join(dir, "out") + ":/blast/out",
-		"-e", "BLAST_MODEL_UPSTREAM=" + o.Upstream,
-		"--entrypoint", "/blast/bin/blast-proxy"}
+		"-v", dir + ":/tripline:ro", "-v", filepath.Join(dir, "out") + ":/tripline/out",
+		"-e", "TRIPLINE_MODEL_UPSTREAM=" + o.Upstream,
+		"--entrypoint", "/tripline/bin/tripline-proxy"}
 	if o.ModelKey != "" {
 		// Passed by name so the value never appears in a process listing.
 		proxyArgs = append(proxyArgs, "-e", "OPENAI_API_KEY")
@@ -172,7 +172,7 @@ func Run(ctx context.Context, o Options) (string, *report.Summary, error) {
 	if err := dockerEnv(ctx, env, nil, proxyArgs...); err != nil {
 		return dir, nil, fmt.Errorf("start proxy: %w", err)
 	}
-	if err := docker(ctx, nil, "network", "connect", "--alias", "blast-proxy", net, proxyName); err != nil {
+	if err := docker(ctx, nil, "network", "connect", "--alias", "tripline-proxy", net, proxyName); err != nil {
 		return dir, nil, err
 	}
 	meta.ProxyIP = strings.TrimSpace(dockerOut(ctx, "inspect", "-f", "{{(index .NetworkSettings.Networks \""+net+"\").IPAddress}}", proxyName))
@@ -190,15 +190,15 @@ func Run(ctx context.Context, o Options) (string, *report.Summary, error) {
 		"--pids-limit", "1024", "--memory", o.Memory, "--cpus", o.CPUs,
 		"-v", filepath.Join(dir, "work") + ":" + sandboxWork,
 		"-v", filepath.Join(dir, "home") + ":" + sandboxHome,
-		"-v", filepath.Join(dir, "out") + ":/blast/out",
-		"-v", filepath.Join(dir, "bin") + ":/blast/bin:ro",
-		"-v", filepath.Join(dir, "policy.json") + ":/blast/policy.json:ro",
-		"-e", "HTTPS_PROXY=http://blast-proxy:3128", "-e", "HTTP_PROXY=http://blast-proxy:3128",
-		"-e", "https_proxy=http://blast-proxy:3128", "-e", "http_proxy=http://blast-proxy:3128",
-		"-e", "NO_PROXY=blast-proxy", "-e", "no_proxy=blast-proxy",
-		"-e", "OPENAI_BASE_URL=http://blast-proxy:8081/v1",
+		"-v", filepath.Join(dir, "out") + ":/tripline/out",
+		"-v", filepath.Join(dir, "bin") + ":/tripline/bin:ro",
+		"-v", filepath.Join(dir, "policy.json") + ":/tripline/policy.json:ro",
+		"-e", "HTTPS_PROXY=http://tripline-proxy:3128", "-e", "HTTP_PROXY=http://tripline-proxy:3128",
+		"-e", "https_proxy=http://tripline-proxy:3128", "-e", "http_proxy=http://tripline-proxy:3128",
+		"-e", "NO_PROXY=tripline-proxy", "-e", "no_proxy=tripline-proxy",
+		"-e", "OPENAI_BASE_URL=http://tripline-proxy:8081/v1",
 		// Agents insist on a key being set; the gateway replaces it.
-		"-e", "OPENAI_API_KEY=sk-blast-sandbox-placeholder",
+		"-e", "OPENAI_API_KEY=sk-tripline-sandbox-placeholder",
 		"-e", "HOME=" + sandboxHome,
 		"-w", sandboxWork,
 	}
@@ -207,12 +207,12 @@ func Run(ctx context.Context, o Options) (string, *report.Summary, error) {
 		if err != nil {
 			return dir, nil, err
 		}
-		agentArgs = append(agentArgs, "-v", abs+":/blast/agents:ro")
+		agentArgs = append(agentArgs, "-v", abs+":/tripline/agents:ro")
 	}
 	for k, v := range o.AgentEnv {
 		agentArgs = append(agentArgs, "-e", k+"="+v)
 	}
-	agentArgs = append(agentArgs, "--entrypoint", shimPath, o.Image, "run", "--policy", "/blast/policy.json", "--")
+	agentArgs = append(agentArgs, "--entrypoint", shimPath, o.Image, "run", "--policy", "/tripline/policy.json", "--")
 	agentArgs = append(agentArgs, o.Cmd...)
 
 	runCtx := ctx
@@ -501,7 +501,7 @@ func baseline(dir string) error {
 	for _, args := range [][]string{
 		{"init", "-q"},
 		{"add", "-A"},
-		{"-c", "user.name=blast", "-c", "user.email=blast@example.invalid", "commit", "-q", "--allow-empty", "-m", "base"},
+		{"-c", "user.name=tripline", "-c", "user.email=tripline@example.invalid", "commit", "-q", "--allow-empty", "-m", "base"},
 	} {
 		if out, err := exec.Command("git", append(g, args...)...).CombinedOutput(); err != nil {
 			return fmt.Errorf("git %s: %v: %s", args[len(args)-1], err, out)

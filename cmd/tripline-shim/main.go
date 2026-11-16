@@ -1,9 +1,9 @@
 //go:build linux
 
-// blast-shim runs inside the sandbox container. It has two stages:
+// tripline-shim runs inside the sandbox container. It has two stages:
 //
-//	blast-shim run     --policy P -- cmd...   (outer, unrestricted)
-//	blast-shim confine --policy P -- cmd...   (inner, applies Landlock, then execs)
+//	tripline-shim run     --policy P -- cmd...   (outer, unrestricted)
+//	tripline-shim confine --policy P -- cmd...   (inner, applies Landlock, then execs)
 //
 // "run" starts strace, which then runs "confine". The tracer is therefore
 // outside the Landlock domain and writes its log to a directory the agent is
@@ -21,18 +21,18 @@ import (
 
 	"github.com/landlock-lsm/go-landlock/landlock"
 
-	"github.com/omerfaizan10/blast-radius/internal/events"
-	"github.com/omerfaizan10/blast-radius/internal/policy"
+	"github.com/omerfaizan10/tripline/internal/events"
+	"github.com/omerfaizan10/tripline/internal/policy"
 )
 
 const (
-	outDir   = "/blast/out"
-	selfPath = "/blast/bin/blast-shim"
+	outDir   = "/tripline/out"
+	selfPath = "/tripline/bin/tripline-shim"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		fatal("usage: blast-shim run|confine --policy FILE -- cmd...")
+		fatal("usage: tripline-shim run|confine --policy FILE -- cmd...")
 	}
 	pol, cmd, err := parseArgs(os.Args[2:])
 	if err != nil {
@@ -50,7 +50,7 @@ func main() {
 
 func parseArgs(a []string) (string, []string, error) {
 	if len(a) < 4 || a[0] != "--policy" || a[2] != "--" {
-		return "", nil, errors.New("usage: blast-shim run|confine --policy FILE -- cmd...")
+		return "", nil, errors.New("usage: tripline-shim run|confine --policy FILE -- cmd...")
 	}
 	return a[1], a[3:], nil
 }
@@ -173,6 +173,6 @@ func exitCode(err error) int {
 func now() float64 { return float64(time.Now().UnixMicro()) / 1e6 }
 
 func fatal(msg string) {
-	fmt.Fprintln(os.Stderr, "blast-shim:", msg)
+	fmt.Fprintln(os.Stderr, "tripline-shim:", msg)
 	os.Exit(126)
 }

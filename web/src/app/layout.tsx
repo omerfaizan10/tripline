@@ -14,7 +14,7 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Blast Radius",
+  title: "Tripline",
   description:
     "What a coding agent actually did inside a recorded, policy-enforced sandbox: every program it ran, every host it reached and every action that was blocked.",
 };

@@ -27,8 +27,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/omerfaizan10/blast-radius/internal/events"
-	"github.com/omerfaizan10/blast-radius/internal/policy"
+	"github.com/omerfaizan10/tripline/internal/events"
+	"github.com/omerfaizan10/tripline/internal/policy"
 )
 
 // Config wires the proxy to a run.
@@ -159,7 +159,7 @@ func (p *Proxy) connect(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		ev.Result, ev.Detail = events.Denied, joinDetail(ev.Detail, why)
 		p.emit(ev)
-		http.Error(w, "blocked by blast radius policy: "+why, http.StatusForbidden)
+		http.Error(w, "blocked by tripline policy: "+why, http.StatusForbidden)
 		return
 	}
 	up, err := p.cfg.Dial("tcp", net.JoinHostPort(host, portStr))
@@ -241,7 +241,7 @@ func (p *Proxy) plain(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		ev.Result, ev.Detail = events.Denied, joinDetail(ev.Detail, why)
 		p.emit(ev)
-		http.Error(w, "blocked by blast radius policy: "+why, http.StatusForbidden)
+		http.Error(w, "blocked by tripline policy: "+why, http.StatusForbidden)
 		return
 	}
 	out, err := http.NewRequestWithContext(r.Context(), r.Method, r.URL.String(), bytes.NewReader(body))

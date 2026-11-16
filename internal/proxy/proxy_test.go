@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/omerfaizan10/blast-radius/internal/events"
-	"github.com/omerfaizan10/blast-radius/internal/policy"
+	"github.com/omerfaizan10/tripline/internal/events"
+	"github.com/omerfaizan10/tripline/internal/policy"
 )
 
 type logBuf struct {

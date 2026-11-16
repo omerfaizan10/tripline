@@ -10,10 +10,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/omerfaizan10/blast-radius/internal/canary"
-	"github.com/omerfaizan10/blast-radius/internal/events"
-	"github.com/omerfaizan10/blast-radius/internal/policy"
-	"github.com/omerfaizan10/blast-radius/internal/pricing"
+	"github.com/omerfaizan10/tripline/internal/canary"
+	"github.com/omerfaizan10/tripline/internal/events"
+	"github.com/omerfaizan10/tripline/internal/policy"
+	"github.com/omerfaizan10/tripline/internal/pricing"
 )
 
 // Severity orders findings.
@@ -46,7 +46,7 @@ type Summary struct {
 	Programs      []string       `json:"programs"`
 	Hosts         []HostStat     `json:"hosts"`
 	Denied        int            `json:"denied"`
-	BlastRadius   []RadiusEntry  `json:"blast_radius"` // where the agent reached outside its workspace, grouped
+	Reach         []RadiusEntry  `json:"reach"` // where the agent reached outside its workspace, grouped
 	ModelRequests int            `json:"model_requests"`
 	TokensIn      int            `json:"tokens_in"`
 	TokensOut     int            `json:"tokens_out"`
@@ -91,9 +91,14 @@ type Input struct {
 }
 
 // systemRead are directories whose reads are routine (libraries, configs) and
-// do not count towards the blast radius.
+// do not count towards the reach.
 var systemRead = []string{"/usr", "/lib", "/lib64", "/bin", "/sbin", "/etc", "/proc", "/sys", "/dev", "/opt", "/var/lib", "/run",
-	"/blast"} // the harness's read-only mount (agent wrappers, shim)
+	"/tripline", // the harness's read-only mount (agent wrappers, shim)
+	"/blast"}    // the same mount in runs recorded before the rename to Tripline
+
+// legacyShim is the launcher's path in runs recorded before the rename; those
+// recordings are still re-analysed, so their startup events must be dropped too.
+const legacyShim = "/blast/bin/blast-shim"
 
 // Analyze flags events in place and returns the summary.
 func Analyze(in Input) ([]events.Event, Summary) {
@@ -258,7 +263,7 @@ func Analyze(in Input) ([]events.Event, Summary) {
 	sum.Events = len(evs)
 	sum.FilesRead, sum.FilesWritten = len(reads), len(writes)
 	sum.Programs = keys(progs)
-	sum.BlastRadius = radiusList(radius)
+	sum.Reach = radiusList(radius)
 	sum.Models = keys(models)
 	for _, h := range hosts {
 		sum.Hosts = append(sum.Hosts, *h)
@@ -297,7 +302,7 @@ func dropLauncher(evs []events.Event, self string) []events.Event {
 	events.Sort(trace)
 	start := -1
 	for i, e := range trace {
-		if e.Op == events.OpExec && e.Result == events.OK && e.Path != self {
+		if e.Op == events.OpExec && e.Result == events.OK && e.Path != self && e.Path != legacyShim {
 			start = i
 			break
 		}

@@ -23,7 +23,7 @@ export default function Home() {
         <div className="head">
           <h1>Every recorded run, second by second</h1>
           <p className="lede">
-            Blast Radius runs a coding agent in a sandbox that records every
+            Tripline runs a coding agent in a sandbox that records every
             program it starts, every file it touches and every host it contacts,
             and blocks what the policy does not allow. Below: Codex on {model}{" "}
             working through all {bench.length} Django tasks from SWE-bench

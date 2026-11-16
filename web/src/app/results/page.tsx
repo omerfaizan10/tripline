@@ -9,7 +9,7 @@ import { getIndex, getRun, shortId } from "@/lib/data";
 import { secs, usd } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "Results · Blast Radius",
+  title: "Results · Tripline",
   description:
     "How Codex did on 82 SWE-bench Verified Django tasks inside the sandbox, what it cost, and what the sandbox saw it do.",
 };

@@ -7,16 +7,16 @@ all: build linux image
 
 # Host CLI
 build:
-	go build -o bin/blast ./cmd/blast
+	go build -o bin/tripline ./cmd/tripline
 
 # Binaries that run inside the containers
 linux:
 	mkdir -p bin/linux-$(ARCH)
-	GOOS=linux GOARCH=$(ARCH) CGO_ENABLED=0 go build -trimpath -o bin/linux-$(ARCH)/blast-shim ./cmd/blast-shim
-	GOOS=linux GOARCH=$(ARCH) CGO_ENABLED=0 go build -trimpath -o bin/linux-$(ARCH)/blast-proxy ./cmd/blast-proxy
+	GOOS=linux GOARCH=$(ARCH) CGO_ENABLED=0 go build -trimpath -o bin/linux-$(ARCH)/tripline-shim ./cmd/tripline-shim
+	GOOS=linux GOARCH=$(ARCH) CGO_ENABLED=0 go build -trimpath -o bin/linux-$(ARCH)/tripline-proxy ./cmd/tripline-proxy
 
 image:
-	docker build -t blast-sandbox:dev sandbox/
+	docker build -t tripline-sandbox:dev sandbox/
 
 test:
 	go test ./...

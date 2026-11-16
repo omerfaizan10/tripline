@@ -1,4 +1,4 @@
-# Blast Radius
+# Tripline
 
 A sandbox, recorder and policy engine for AI coding agents. It runs an agent in a container, records every program it starts, every file it touches and every host it contacts, blocks what the policy does not allow, and turns the record into a report: what the agent reached, what it was stopped from doing, and what it changed.
 
@@ -34,12 +34,12 @@ Everything above, including each run's timeline, is in the static site under `we
 ```
  host (macOS + Colima, or Linux)
  ┌──────────────────────────────────────────────────────────────────────┐
- │ blast run                                                            │
+ │ tripline run                                                         │
  │   ├─ copies the task into a run directory, plants decoy secrets      │
  │   ├─ starts the proxy container   ──────────►  internet (allowlist)  │
  │   └─ starts the agent container on an internal network               │
- │        blast-shim run       strace -f, log written outside the       │
- │          └─ blast-shim confine   Landlock: files + TCP to proxy only │
+ │        tripline-shim run       strace -f, log written outside the       │
+ │          └─ tripline-shim confine   Landlock: files + TCP to proxy only │
  │               └─ the agent (Codex, or any command)                   │
  │   then: parse the trace + proxy log, analyse, write the report       │
  └──────────────────────────────────────────────────────────────────────┘
@@ -49,8 +49,8 @@ Everything above, including each run's timeline, is in the static site under `we
 - **Enforcement.** Landlock limits which paths the agent can read and write, and restricts TCP connections to the proxy's ports. The container sits on an internal Docker network whose only route out is the proxy.
 - **Proxy.** Every outbound request goes through an allowlisting proxy. Model traffic goes through a gateway in the same proxy that holds the real API key (the agent only sees a placeholder), meters tokens per request and prices them from a dated price table. The proxy looks for decoy secrets in model requests, in plain HTTP requests and in the hostnames of HTTPS connections. HTTPS traffic to other hosts is tunnelled, so its contents are not inspected; the trace still records the program and its command line.
 - **Decoys.** Each run plants fake credentials where agents and malware look: `~/.aws/credentials`, `~/.ssh/id_ed25519`, `~/.config/gh/hosts.yml`, `~/.npmrc`. Reading one, putting one on a command line, sending one out or writing one into the workspace is a high finding.
-- **Policies.** YAML: readable paths, writable paths, allowed hosts, programs to flag, and a mode. `enforce` blocks anything outside the policy, `audit` blocks nothing and flags everything, `ask` pauses unknown network requests for a decision. `blast policy synth` writes the tightest policy a set of past runs needed.
-- **Report.** Findings ranked high or medium, the hosts contacted, the blast radius (every place outside the workspace the agent touched, grouped), and the diff of what it changed.
+- **Policies.** YAML: readable paths, writable paths, allowed hosts, programs to flag, and a mode. `enforce` blocks anything outside the policy, `audit` blocks nothing and flags everything, `ask` pauses unknown network requests for a decision. `tripline policy synth` writes the tightest policy a set of past runs needed.
+- **Report.** Findings ranked high or medium, the hosts contacted, the reach (every place outside the workspace the agent touched, grouped), and the diff of what it changed.
 
 ## The benchmark
 
@@ -84,9 +84,9 @@ make all                 # host CLI, Linux shim + proxy, sandbox image
 echo 'OPENAI_API_KEY=...' > .env
 
 # One session: any command, recorded and confined by the policy.
-./bin/blast run --task testdata/tasks/hello --policy policies/audit.yaml -- /work/rogue_agent.sh
-./bin/blast report .runs/<run-id>
-./bin/blast policy synth .runs/<run-id>
+./bin/tripline run --task testdata/tasks/hello --policy policies/audit.yaml -- /work/rogue_agent.sh
+./bin/tripline report .runs/<run-id>
+./bin/tripline policy synth .runs/<run-id>
 
 # The benchmark.
 python3 bench/run.py select --n 5 --seed 7 > bench/sets/pilot.txt
@@ -103,9 +103,9 @@ On macOS with Colima, run directories must live under your home directory (Colim
 ## Layout
 
 ```
-cmd/blast         host CLI: run, report, runs, policy synth
-cmd/blast-shim    inside the container: strace, then Landlock, then the agent
-cmd/blast-proxy   allowlisting proxy and model gateway
+cmd/tripline         host CLI: run, report, runs, policy synth
+cmd/tripline-shim    inside the container: strace, then Landlock, then the agent
+cmd/tripline-proxy   allowlisting proxy and model gateway
 internal/         policy, strace parser, decoys, proxy, pricing, analyser, sandbox
 agents/codex.sh   how Codex is launched in the sandbox
 policies/         default, audit and bench policies

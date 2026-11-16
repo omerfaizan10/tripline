@@ -1,8 +1,8 @@
-// blast runs coding agents inside a recorded, policy-enforced sandbox.
+// tripline runs coding agents inside a recorded, policy-enforced sandbox.
 //
-//	blast run [flags] -- <agent command>   run one session
-//	blast report <run-dir>                 re-analyse and print a past run
-//	blast runs                             list past runs
+//	tripline run [flags] -- <agent command>   run one session
+//	tripline report <run-dir>                 re-analyse and print a past run
+//	tripline runs                             list past runs
 package main
 
 import (
@@ -19,11 +19,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/omerfaizan10/blast-radius/internal/canary"
-	"github.com/omerfaizan10/blast-radius/internal/events"
-	"github.com/omerfaizan10/blast-radius/internal/policy"
-	"github.com/omerfaizan10/blast-radius/internal/report"
-	"github.com/omerfaizan10/blast-radius/internal/sandbox"
+	"github.com/omerfaizan10/tripline/internal/canary"
+	"github.com/omerfaizan10/tripline/internal/events"
+	"github.com/omerfaizan10/tripline/internal/policy"
+	"github.com/omerfaizan10/tripline/internal/report"
+	"github.com/omerfaizan10/tripline/internal/sandbox"
 )
 
 func main() {
@@ -48,18 +48,18 @@ func main() {
 		os.Exit(2)
 	}
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "blast:", err)
+		fmt.Fprintln(os.Stderr, "tripline:", err)
 		os.Exit(1)
 	}
 }
 
 func usage() {
-	fmt.Fprint(os.Stderr, `blast: run coding agents in a recorded, policy-enforced sandbox
+	fmt.Fprint(os.Stderr, `tripline: run coding agents in a recorded, policy-enforced sandbox
 
-  blast run [flags] -- <agent command>   run one session
-  blast report <run-dir>                 re-analyse and print a past run
-  blast runs                             list past runs
-  blast policy synth <run-dir>...        write the tightest policy those runs needed
+  tripline run [flags] -- <agent command>   run one session
+  tripline report <run-dir>                 re-analyse and print a past run
+  tripline runs                             list past runs
+  tripline policy synth <run-dir>...        write the tightest policy those runs needed
 
 run flags:
 `)
@@ -70,10 +70,10 @@ func cmdRun(args []string) error {
 	pol := fs.String("policy", "policies/default.yaml", "policy file")
 	task := fs.String("task", "", "directory copied into the sandbox workspace")
 	name := fs.String("name", "", "label for this run")
-	image := fs.String("image", "blast-sandbox:dev", "sandbox image")
+	image := fs.String("image", "tripline-sandbox:dev", "sandbox image")
 	runs := fs.String("runs", ".runs", "where run directories are written")
-	bin := fs.String("bin", "", "directory with linux blast-shim and blast-proxy (default bin/linux-<arch>)")
-	agents := fs.String("agents", "agents", "directory mounted read-only at /blast/agents (\"\" for none)")
+	bin := fs.String("bin", "", "directory with linux tripline-shim and tripline-proxy (default bin/linux-<arch>)")
+	agents := fs.String("agents", "agents", "directory mounted read-only at /tripline/agents (\"\" for none)")
 	mem := fs.String("memory", "4g", "sandbox memory limit")
 	cpus := fs.String("cpus", "2", "sandbox CPU limit")
 	timeout := fs.Duration("timeout", 30*time.Minute, "kill the agent after this long")
@@ -125,7 +125,7 @@ func cmdRun(args []string) error {
 
 func cmdReport(args []string) error {
 	if len(args) != 1 {
-		return fmt.Errorf("usage: blast report <run-dir>")
+		return fmt.Errorf("usage: tripline report <run-dir>")
 	}
 	sum, err := sandbox.Collect(args[0], nil)
 	if err != nil {
@@ -164,7 +164,7 @@ func cmdRuns(args []string) error {
 
 func printSummary(dir string, s *report.Summary) {
 	w := os.Stdout
-	fmt.Fprintf(w, "\n── blast radius ─────────────────────────────────────\n")
+	fmt.Fprintf(w, "\n── tripline ─────────────────────────────────────────\n")
 	fmt.Fprintf(w, "run        %s\n", dir)
 	fmt.Fprintf(w, "mode       %s   exit %d   %.1fs   %d events\n", s.Mode, s.ExitCode, s.DurationSec, s.Events)
 	fmt.Fprintf(w, "files      %d read, %d written\n", s.FilesRead, s.FilesWritten)
@@ -184,11 +184,11 @@ func printSummary(dir string, s *report.Summary) {
 		fmt.Fprintf(w, "model      %d requests, %d tokens in (%d cached), %d out (%s), $%.4f\n", s.ModelRequests, s.TokensIn, s.TokensCached, s.TokensOut, strings.Join(s.Models, ", "), s.CostUSD)
 	}
 	fmt.Fprintf(w, "denied     %d actions blocked\n", s.Denied)
-	if len(s.BlastRadius) == 0 {
+	if len(s.Reach) == 0 {
 		fmt.Fprintf(w, "radius     nothing outside the workspace\n")
 	} else {
 		var rs []string
-		for _, r := range s.BlastRadius {
+		for _, r := range s.Reach {
 			tag := ""
 			if r.Decoy {
 				tag = " DECOY"
@@ -226,7 +226,7 @@ func askTTY(host string, port int) bool {
 		return false
 	}
 	defer tty.Close()
-	fmt.Fprintf(tty, "\n[blast] the agent wants to reach %s:%d. Allow? [y/N] ", host, port)
+	fmt.Fprintf(tty, "\n[tripline] the agent wants to reach %s:%d. Allow? [y/N] ", host, port)
 	line, _ := bufio.NewReader(tty).ReadString('\n')
 	return strings.HasPrefix(strings.ToLower(strings.TrimSpace(line)), "y")
 }
@@ -276,7 +276,7 @@ func loadDotEnv(file string) {
 
 func cmdPolicy(args []string) error {
 	if len(args) < 1 || args[0] != "synth" {
-		return fmt.Errorf("usage: blast policy synth [-o file] [-name n] <run-dir>...")
+		return fmt.Errorf("usage: tripline policy synth [-o file] [-name n] <run-dir>...")
 	}
 	fs := flag.NewFlagSet("policy synth", flag.ExitOnError)
 	out := fs.String("o", "", "write the policy here instead of stdout")
@@ -296,7 +296,7 @@ func cmdPolicy(args []string) error {
 			_ = json.Unmarshal(b, &m)
 		}
 		if m.ExitCode != 0 {
-			fmt.Fprintf(os.Stderr, "blast: warning: %s exited %d; its accesses are still used\n", d, m.ExitCode)
+			fmt.Fprintf(os.Stderr, "tripline: warning: %s exited %d; its accesses are still used\n", d, m.ExitCode)
 		}
 		var set canary.Set
 		if b, err := os.ReadFile(filepath.Join(d, "decoys-detail.json")); err == nil {
@@ -310,7 +310,7 @@ func cmdPolicy(args []string) error {
 			return err
 		}
 		if len(evs) == 0 {
-			return fmt.Errorf("%s has no events.jsonl (run blast report on it first)", d)
+			return fmt.Errorf("%s has no events.jsonl (run tripline report on it first)", d)
 		}
 		for _, e := range evs {
 			if e.Result != events.OK {

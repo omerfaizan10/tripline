@@ -1,4 +1,4 @@
-// blast-proxy runs in its own container, on both the sandbox's private
+// tripline-proxy runs in its own container, on both the sandbox's private
 // network and a network with internet access. It is the only way out.
 //
 // The model API key is read from this container's environment; the sandbox
@@ -16,14 +16,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/omerfaizan10/blast-radius/internal/policy"
-	"github.com/omerfaizan10/blast-radius/internal/proxy"
+	"github.com/omerfaizan10/tripline/internal/policy"
+	"github.com/omerfaizan10/tripline/internal/proxy"
 )
 
 func main() {
-	polFile := flag.String("policy", "/blast/policy.json", "expanded policy (JSON)")
-	decoyFile := flag.String("decoys", "/blast/decoys.json", "decoy secret values (JSON list)")
-	logFile := flag.String("log", "/blast/out/proxy.jsonl", "event log")
+	polFile := flag.String("policy", "/tripline/policy.json", "expanded policy (JSON)")
+	decoyFile := flag.String("decoys", "/tripline/decoys.json", "decoy secret values (JSON list)")
+	logFile := flag.String("log", "/tripline/out/proxy.jsonl", "event log")
 	askTimeout := flag.Duration("ask-timeout", 2*time.Minute, "ask mode: deny after this long")
 	flag.Parse()
 
@@ -45,7 +45,7 @@ func main() {
 	}
 	defer out.Close()
 
-	upstream := os.Getenv("BLAST_MODEL_UPSTREAM")
+	upstream := os.Getenv("TRIPLINE_MODEL_UPSTREAM")
 	if upstream == "" {
 		upstream = "https://api.openai.com"
 	}
@@ -70,7 +70,7 @@ func main() {
 			}
 		}(s)
 	}
-	log.Printf("blast-proxy: mode=%s hosts=%d decoys=%d gateway=%v", pol.Mode, len(pol.Network.AllowHosts), len(decoys), os.Getenv("OPENAI_API_KEY") != "")
+	log.Printf("tripline-proxy: mode=%s hosts=%d decoys=%d gateway=%v", pol.Mode, len(pol.Network.AllowHosts), len(decoys), os.Getenv("OPENAI_API_KEY") != "")
 
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT)

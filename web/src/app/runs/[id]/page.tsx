@@ -19,7 +19,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const run = getRun(id);
-  return { title: `${shortId(id)} · Blast Radius`, description: run.title };
+  return { title: `${shortId(id)} · Tripline`, description: run.title };
 }
 
 function Section({

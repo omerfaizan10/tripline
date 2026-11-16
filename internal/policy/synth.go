@@ -185,7 +185,7 @@ func sorted(m map[string]bool) []string {
 // Header is a YAML comment block explaining a synthesised policy.
 func (r SynthResult) Header(runs int) string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "# Synthesised by blast from %d run(s): the tightest policy that still\n", runs)
+	fmt.Fprintf(&b, "# Synthesised by tripline from %d run(s): the tightest policy that still\n", runs)
 	fmt.Fprintf(&b, "# allows every access those runs made (%d reads, %d writes, %d host uses).\n", r.Evidence["reads"], r.Evidence["writes"], r.Evidence["hosts"])
 	if len(r.Excluded) > 0 {
 		b.WriteString("# Not granted, although the runs touched them (decoy credentials):\n")
