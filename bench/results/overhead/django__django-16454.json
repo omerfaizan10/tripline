@@ -1,0 +1,32 @@
+{
+  "instance_id": "django__django-16454",
+  "modules": [
+    "user_commands.management.commands.subparser_vanilla",
+    "user_commands.tests"
+  ],
+  "plain": [
+    0.847,
+    0.873,
+    0.821
+  ],
+  "strace": [
+    2.37,
+    2.354,
+    2.402
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.847,
+  "median_strace": 2.37
+}

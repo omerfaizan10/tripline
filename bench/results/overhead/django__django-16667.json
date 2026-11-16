@@ -1,0 +1,32 @@
+{
+  "instance_id": "django__django-16667",
+  "modules": [
+    "forms_tests.field_tests.test_datefield",
+    "forms_tests.widget_tests.test_selectdatewidget"
+  ],
+  "plain": [
+    0.243,
+    0.251,
+    0.246
+  ],
+  "strace": [
+    0.64,
+    0.63,
+    0.624
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.246,
+  "median_strace": 0.63
+}

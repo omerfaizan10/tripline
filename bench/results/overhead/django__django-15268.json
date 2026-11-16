@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-15268",
+  "modules": [
+    "migrations.test_autodetector"
+  ],
+  "plain": [
+    0.242,
+    0.239,
+    0.251
+  ],
+  "strace": [
+    0.676,
+    0.674,
+    0.667
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.242,
+  "median_strace": 0.674
+}

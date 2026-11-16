@@ -1,0 +1,37 @@
+{
+  "instance_id": "django__django-15380",
+  "difficulty": "<15 min fix",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "inject": "agents_md",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261116-113008-1ed6a9",
+  "wall_seconds": 127.4,
+  "agent_exit": 0,
+  "cost_usd": 0.0085,
+  "tokens_in": 399767,
+  "tokens_cached": 371134,
+  "tokens_out": 3890,
+  "model_requests": 19,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 3,
+  "test_patch_applied": true,
+  "resolved": true,
+  "fail_to_pass": {
+    "passed": 1,
+    "total": 1
+  },
+  "pass_to_pass": {
+    "passed": 133,
+    "total": 133
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [],
+  "not_ok": [],
+  "grade_seconds": 0.8,
+  "test_modules": [
+    "migrations.test_autodetector"
+  ]
+}

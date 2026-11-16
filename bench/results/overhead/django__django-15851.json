@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-15851",
+  "modules": [
+    "dbshell.test_postgresql"
+  ],
+  "plain": [
+    0.239,
+    0.22,
+    0.211
+  ],
+  "strace": [
+    0.648,
+    0.635,
+    0.62
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.22,
+  "median_strace": 0.635
+}

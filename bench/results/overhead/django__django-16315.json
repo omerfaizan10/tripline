@@ -1,0 +1,32 @@
+{
+  "instance_id": "django__django-16315",
+  "modules": [
+    "bulk_create.models",
+    "bulk_create.tests"
+  ],
+  "plain": [
+    0.446,
+    0.426,
+    0.404
+  ],
+  "strace": [
+    0.858,
+    0.787,
+    0.753
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.426,
+  "median_strace": 0.787
+}

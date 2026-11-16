@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-14725",
+  "modules": [
+    "model_formsets.tests"
+  ],
+  "plain": [
+    0.464,
+    0.431,
+    0.429
+  ],
+  "strace": [
+    0.877,
+    0.831,
+    0.849
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.431,
+  "median_strace": 0.849
+}

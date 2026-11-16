@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-15572",
+  "modules": [
+    "template_tests.test_autoreloader"
+  ],
+  "plain": [
+    0.226,
+    0.212,
+    0.23
+  ],
+  "strace": [
+    0.643,
+    0.6,
+    0.684
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.226,
+  "median_strace": 0.643
+}

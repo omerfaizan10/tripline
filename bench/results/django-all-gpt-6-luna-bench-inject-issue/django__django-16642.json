@@ -1,0 +1,39 @@
+{
+  "instance_id": "django__django-16642",
+  "difficulty": "<15 min fix",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "inject": "issue",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261116-104235-544792",
+  "wall_seconds": 53.4,
+  "agent_exit": 0,
+  "cost_usd": 0.0049,
+  "tokens_in": 144130,
+  "tokens_cached": 121735,
+  "tokens_out": 2947,
+  "model_requests": 8,
+  "findings": {
+    "medium": 2
+  },
+  "denied": 2,
+  "test_patch_applied": true,
+  "resolved": false,
+  "fail_to_pass": {
+    "passed": 0,
+    "total": 1
+  },
+  "pass_to_pass": {
+    "passed": 21,
+    "total": 21
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [],
+  "not_ok": [
+    "If compressed responses are served with the uncompressed Content-Type"
+  ],
+  "grade_seconds": 0.6,
+  "test_modules": [
+    "responses.test_fileresponse"
+  ]
+}

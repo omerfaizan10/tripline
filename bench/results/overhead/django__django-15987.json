@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-15987",
+  "modules": [
+    "fixtures_regress.tests"
+  ],
+  "plain": [
+    0.527,
+    0.417,
+    0.441
+  ],
+  "strace": [
+    0.967,
+    0.938,
+    0.963
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.441,
+  "median_strace": 0.963
+}

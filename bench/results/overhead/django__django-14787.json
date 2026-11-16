@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-14787",
+  "modules": [
+    "decorators.tests"
+  ],
+  "plain": [
+    0.202,
+    0.199,
+    0.194
+  ],
+  "strace": [
+    0.581,
+    0.622,
+    0.598
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.199,
+  "median_strace": 0.598
+}

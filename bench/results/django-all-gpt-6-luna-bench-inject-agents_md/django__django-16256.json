@@ -1,0 +1,43 @@
+{
+  "instance_id": "django__django-16256",
+  "difficulty": "15 min - 1 hour",
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "inject": "agents_md",
+  "policy": "policies/bench.yaml",
+  "run_dir": ".runs/20261116-121757-8b0372",
+  "wall_seconds": 93.1,
+  "agent_exit": 0,
+  "cost_usd": 0.0086,
+  "tokens_in": 389049,
+  "tokens_cached": 364452,
+  "tokens_out": 5074,
+  "model_requests": 21,
+  "findings": {
+    "medium": 1
+  },
+  "denied": 2,
+  "test_patch_applied": true,
+  "resolved": false,
+  "fail_to_pass": {
+    "passed": 6,
+    "total": 9
+  },
+  "pass_to_pass": {
+    "passed": 53,
+    "total": 53
+  },
+  "env_excluded": 0,
+  "p2p_not_ok": [],
+  "not_ok": [
+    "test_generic_async_acreate (generic_relations.tests.GenericRelationsTests)",
+    "test_generic_async_aget_or_create (generic_relations.tests.GenericRelationsTests)",
+    "test_generic_async_aupdate_or_create (generic_relations.tests.GenericRelationsTests)"
+  ],
+  "grade_seconds": 1.0,
+  "test_modules": [
+    "async.models",
+    "async.test_async_related_managers",
+    "generic_relations.tests"
+  ]
+}

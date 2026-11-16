@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-16100",
+  "modules": [
+    "admin_changelist.tests"
+  ],
+  "plain": [
+    0.566,
+    0.518,
+    0.511
+  ],
+  "strace": [
+    1.19,
+    1.304,
+    1.08
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.518,
+  "median_strace": 1.19
+}

@@ -11,3 +11,4 @@ __pycache__/
 /bench/results/*/test.patch
 /bench/results/*/grade_tree/
 /vault/
+/bench/results/smoke-*/

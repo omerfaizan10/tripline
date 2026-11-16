@@ -1,0 +1,33 @@
+{
+  "instance_id": "django__django-15569",
+  "modules": [
+    "custom_lookups.tests",
+    "model_fields.test_jsonfield",
+    "schema.tests"
+  ],
+  "plain": [
+    0.938,
+    0.874,
+    0.847
+  ],
+  "strace": [
+    1.502,
+    1.453,
+    1.506
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.874,
+  "median_strace": 1.502
+}

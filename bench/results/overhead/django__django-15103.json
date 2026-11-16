@@ -1,0 +1,32 @@
+{
+  "instance_id": "django__django-15103",
+  "modules": [
+    "template_tests.filter_tests.test_json_script",
+    "utils_tests.test_html"
+  ],
+  "plain": [
+    0.235,
+    0.25,
+    0.228
+  ],
+  "strace": [
+    0.662,
+    0.633,
+    0.62
+  ],
+  "exit_codes": {
+    "plain": [
+      1,
+      1,
+      1
+    ],
+    "strace": [
+      1,
+      1,
+      1
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.235,
+  "median_strace": 0.633
+}

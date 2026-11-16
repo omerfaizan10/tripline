@@ -1,0 +1,32 @@
+{
+  "instance_id": "django__django-16255",
+  "modules": [
+    "sitemaps_tests.test_http",
+    "sitemaps_tests.urls.http"
+  ],
+  "plain": [
+    0.338,
+    0.33,
+    0.336
+  ],
+  "strace": [
+    0.814,
+    0.802,
+    0.802
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.336,
+  "median_strace": 0.802
+}

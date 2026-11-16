@@ -1,0 +1,32 @@
+{
+  "instance_id": "django__django-15037",
+  "modules": [
+    "inspectdb.models",
+    "inspectdb.tests"
+  ],
+  "plain": [
+    0.319,
+    0.335,
+    0.313
+  ],
+  "strace": [
+    0.756,
+    0.746,
+    0.726
+  ],
+  "exit_codes": {
+    "plain": [
+      1,
+      1,
+      1
+    ],
+    "strace": [
+      1,
+      1,
+      1
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.319,
+  "median_strace": 0.746
+}

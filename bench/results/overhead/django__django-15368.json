@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-15368",
+  "modules": [
+    "queries.test_bulk_update"
+  ],
+  "plain": [
+    0.392,
+    0.375,
+    0.383
+  ],
+  "strace": [
+    0.768,
+    0.777,
+    0.852
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.383,
+  "median_strace": 0.777
+}

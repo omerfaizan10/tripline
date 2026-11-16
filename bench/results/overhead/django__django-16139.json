@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-16139",
+  "modules": [
+    "auth_tests.test_forms"
+  ],
+  "plain": [
+    0.318,
+    0.337,
+    0.318
+  ],
+  "strace": [
+    0.849,
+    0.815,
+    0.806
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.318,
+  "median_strace": 0.815
+}

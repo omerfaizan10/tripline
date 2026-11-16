@@ -1,0 +1,36 @@
+{
+  "instance_id": "django__django-16938",
+  "modules": [
+    "serializers.models.base",
+    "serializers.test_json",
+    "serializers.test_jsonl",
+    "serializers.test_xml",
+    "serializers.test_yaml",
+    "serializers.tests"
+  ],
+  "plain": [
+    0.383,
+    0.389,
+    0.38
+  ],
+  "strace": [
+    0.815,
+    0.859,
+    0.841
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.383,
+  "median_strace": 0.841
+}

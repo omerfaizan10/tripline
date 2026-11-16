@@ -30,6 +30,7 @@ export function Nav({ current, meta }: { current: "runs" | "results" | "how"; me
           <Link href="/how-it-works/" aria-current={current === "how" ? "page" : undefined}>
             How it works
           </Link>
+          <a href="/tripline-study.pdf">Paper</a>
         </nav>
         {meta && <div className="navmeta mono">{meta}</div>}
       </div>

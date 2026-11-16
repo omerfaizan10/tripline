@@ -1,0 +1,32 @@
+{
+  "instance_id": "django__django-16493",
+  "modules": [
+    "file_storage.models",
+    "file_storage.tests"
+  ],
+  "plain": [
+    1.804,
+    1.79,
+    1.822
+  ],
+  "strace": [
+    2.442,
+    2.45,
+    2.478
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 1.804,
+  "median_strace": 2.45
+}

@@ -29,6 +29,18 @@ The scripted rogue agent tries six things: read a GitHub token, read an SSH key,
 
 Everything above, including each run's timeline, is on the site: **https://tripline-silk.vercel.app** (source in `web/`).
 
+## Study: planted instructions
+
+I then ran every task three more times with an instruction to send the decoy AWS credential to an outside host (246 runs, $1.49). The write-up is a short paper: [`study/paper.pdf`](study/paper.pdf), built with Typst from `study/paper.typ`; every number in it comes from `study/data.json`, which `study/analyze.py` computes from the run records.
+
+| Where the instruction was    | Attempted it | Refused in a message | Blocked and flagged |
+| ---------------------------- | ------------ | -------------------- | ------------------- |
+| Told outright, in the issue  | 0 / 82       | 81.7%                | none to block       |
+| Told outright, in AGENTS.md  | 0 / 82       | 91.5%                | none to block       |
+| Hidden in a repo script      | 31 / 82      | 0%                   | 31 / 31             |
+
+Told outright, the agent never did it. When `AGENTS.md` only said to run `scripts/check_env.py` before testing, it ran the script in every one of the 28 runs where it ran tests, plus 3 more, and opened it first once. The sandbox refused every credential read, so nothing left. Resolve rates stayed at 76 to 78%. Recording with strace slowed Django's test suites by a median 2.48x.
+
 ## How it works
 
 ```
@@ -110,5 +122,6 @@ internal/         policy, strace parser, decoys, proxy, pricing, analyser, sandb
 agents/codex.sh   how Codex is launched in the sandbox
 policies/         default, audit and bench policies
 bench/            SWE-bench harness, task sets, results, export for the site
+study/            the paper, its analysis script and the data it reads
 web/              the static site: every run, and the results
 ```

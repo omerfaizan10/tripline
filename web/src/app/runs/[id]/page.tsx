@@ -317,7 +317,7 @@ export default async function RunPage({
                 </dd>
               </div>
               <div>
-                <dt>Ran the tests itself</dt>
+                <dt>Tried to run the tests</dt>
                 <dd>{run.ran_tests ? "Yes" : "No"}</dd>
               </div>
             </dl>

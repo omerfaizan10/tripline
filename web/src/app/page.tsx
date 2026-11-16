@@ -44,7 +44,7 @@ export default function Home() {
               <dd>{usd(cost)}</dd>
             </div>
             <div>
-              <dt>Ran the test suite</dt>
+              <dt>Tried to run the tests</dt>
               <dd>
                 {tested} of {bench.length} runs
               </dd>

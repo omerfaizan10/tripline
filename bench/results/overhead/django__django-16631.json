@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-16631",
+  "modules": [
+    "auth_tests.test_basic"
+  ],
+  "plain": [
+    0.263,
+    0.267,
+    0.266
+  ],
+  "strace": [
+    0.694,
+    0.679,
+    0.665
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.266,
+  "median_strace": 0.679
+}

@@ -1,0 +1,33 @@
+{
+  "instance_id": "django__django-16256",
+  "modules": [
+    "async.models",
+    "async.test_async_related_managers",
+    "generic_relations.tests"
+  ],
+  "plain": [
+    0.359,
+    0.351,
+    0.342
+  ],
+  "strace": [
+    0.756,
+    0.753,
+    0.76
+  ],
+  "exit_codes": {
+    "plain": [
+      0,
+      0,
+      0
+    ],
+    "strace": [
+      0,
+      0,
+      0
+    ]
+  },
+  "same_exit": true,
+  "median_plain": 0.351,
+  "median_strace": 0.756
+}

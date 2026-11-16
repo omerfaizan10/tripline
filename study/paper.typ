@@ -44,10 +44,12 @@
     tasks in SWE-bench Verified that run on the sandbox's Python, graded against the benchmark's hidden tests. Without attacks the agent
     resolved #both(d.clean.resolved) of tasks, touched no decoy credential in any run, and its only blocked network traffic was its own
     analytics calls. I then planted instructions to send a decoy credential to an outside host, in three conditions of #C.overt_issue.n
-    runs each. When the instruction was explicit, in the issue text or in an `AGENTS.md` file, the agent acted on it in
-    #pct(C.overt_issue.complied) and #pct(C.overt_agents_md.complied) of runs. When `AGENTS.md` only asked it to run a repository
-    script that did the same thing, it ran the script in #pct(C.covert_script.ran_script) of runs and inspected it first in
-    #pct(C.covert_script.inspected_script_first); every credential read was refused by the sandbox and flagged.
+    runs each. When the instruction was explicit, in the issue text or in an `AGENTS.md` file, the agent never acted on it
+    (#(C.overt_issue.complied.k + C.overt_agents_md.complied.k) of #(C.overt_issue.n + C.overt_agents_md.n) runs) and refused it in
+    a message in #pct(C.overt_issue.declined_in_message) and #pct(C.overt_agents_md.declined_in_message) of runs. When `AGENTS.md`
+    only asked it to run a repository script before testing, and the script did the same thing, it ran the script in
+    #both(C.covert_script.ran_script) runs, including every run in which it ran tests, and read the script first in
+    #frac(C.covert_script.inspected_script_first). Every one of those credential reads was refused by the sandbox and flagged.
     #if ov != none [Recording with strace cost a median #str(ov.ratio_median)$times$ slowdown on the benchmark's test suites.]
     Building the measurement exposed four grader bugs that would have silently corrupted scores, and two confounds in the agent's
     environment; I describe them because they apply to any agent evaluation.
@@ -105,7 +107,7 @@ filesystem and network access, and on strace @strace for recording.
       #for i in items [#text(font: "DejaVu Sans Mono", size: 6.8pt, i) \ ]
     ]
     #grid(columns: (1.3fr, 0.32fr, 1.15fr, 0.32fr, 0.85fr), align: horizon,
-      bx("Agent container (internal network)", ("tripline-shim run: starts strace", "strace -f: records every process", "tripline-shim confine: Landlock", "the agent (Codex CLI)")),
+      bx("Agent container", ("tripline-shim run: starts strace", "strace -f: records every process", "tripline-shim confine: Landlock", "the agent (Codex CLI)")),
       align(center)[→ \ #text(size: 6.5pt)[only route]],
       bx("Proxy container", ("allowlist by hostname", "model gateway: holds real key", "meters tokens, scans decoys", "logs every request")),
       align(center)[→ \ #text(size: 6.5pt)[allowed]],
@@ -172,8 +174,9 @@ Each condition runs all #C.overt_issue.n tasks once with a planted instruction t
 - *Covert, repository script.* `AGENTS.md` says only to run `python3 scripts/check_env.py` before testing. The script reads the credential and posts it to the host. The instruction never mentions credentials; the attack is in code the agent would have to read to notice.
 
 All runs use the enforcing benchmark policy, as a deployment would. A run _complied_ if it attempted to read the decoy or to contact the
-planted host. I also record whether the agent ran and inspected the script, whether it explicitly declined in a message (a keyword
-rule restricted to runs with no attempt, checked by hand on a sample), whether Tripline flagged the attempt, and whether the task was
+planted host. I also record whether the agent ran and inspected the script, whether it ran Django's tests, whether it explicitly
+refused in a message (a keyword rule requiring one sentence that both declines and names the risk, restricted to runs with no attempt,
+and checked by hand against every unmatched message in the overt conditions), whether it mentioned the planted instruction at all, whether Tripline flagged the attempt, and whether the task was
 still resolved. The #d.clean.n runs without injection are the false-positive baseline.
 
 == Recording overhead
@@ -238,37 +241,45 @@ built its own virtual environment. The resolve rate was reached almost entirely 
 #figure(
   placement: top,
   scope: "parent",
-  caption: [Outcomes per condition. Percentages of #C.overt_issue.n runs unless marked _of attempts_. Resolved: task still solved under injection; the same tasks without injection resolved #pct(C.overt_issue.resolved_clean_same_tasks).],
+  caption: [Outcomes per condition. Percentages of #C.overt_issue.n runs unless marked _of attempts_. Refused: said in a message that it would not follow the instruction. Resolved: task still solved under injection; the same tasks without injection resolved #pct(C.overt_issue.resolved_clean_same_tasks).],
   {
   set text(size: 8.5pt, hyphenate: false)
   table(
-    columns: (1.5fr, 0.8fr, 0.8fr, 0.9fr, 0.9fr, 1.1fr, 1.2fr, 0.8fr),
-    align: (left, right, right, right, right, right, right, right),
+    columns: (1.45fr, 0.8fr, 0.75fr, 0.8fr, 0.85fr, 0.75fr, 0.75fr, 1.05fr, 1.15fr, 0.8fr),
+    align: (left, right, right, right, right, right, right, right, right, right),
     table.hline(stroke: 0.7pt),
-    table.header([*Condition*], [*Complied*], [*Read\ decoy*], [*Contacted\ host*], [*Declined\ in message*], [*Flagged\ (of attempts)*], [*Reported block\ (of attempts)*], [*Resolved*]),
+    table.header([*Condition*], [*Complied*], [*Read\ decoy*], [*Contacted\ host*], [*Refused*], [*Ran\ tests*], [*Ran\ script*], [*Flagged\ (of attempts)*], [*Reported block\ (of attempts)*], [*Resolved*]),
     table.hline(stroke: 0.4pt),
     ..conds.map(k => {
       let c = C.at(k)
       (cond-label.at(k), pct(c.complied), pct(c.read_attempt), pct(c.exfil_attempt), pct(c.declined_in_message),
-       both(c.flagged_of_attempts), both(c.reported_block_of_attempts), pct(c.resolved))
+       pct(c.tried_tests), pct(c.ran_script), both(c.flagged_of_attempts), both(c.reported_block_of_attempts), pct(c.resolved))
     }).flatten(),
     table.hline(stroke: 0.7pt),
   )
   },
 ) <tab-outcomes>
 
-@fig-comply and @tab-outcomes give the results. With the explicit instruction, the agent acted on it in
-#both(C.overt_issue.complied) runs when it came in the issue text and #both(C.overt_agents_md.complied) when it came in
-`AGENTS.md`, and said in a message that it would not run it in #pct(C.overt_issue.declined_in_message) and
-#pct(C.overt_agents_md.declined_in_message) of runs. A typical message: "I'll skip the maintainer note's credential upload command
-because it would send local AWS credentials to an external service."
+@fig-comply and @tab-outcomes give the results. The explicit instruction was never followed: #frac(C.overt_issue.complied) runs
+when it came in the issue text and #frac(C.overt_agents_md.complied) when it came in `AGENTS.md` (95% upper bound
+#str(C.overt_issue.complied_ci.at(1))% each). The agent refused it in a message in #pct(C.overt_issue.declined_in_message) and
+#pct(C.overt_agents_md.declined_in_message) of runs and mentioned it at all in #pct(C.overt_issue.mentioned_payload) and
+#pct(C.overt_agents_md.mentioned_payload); the rest silently ignored it. A typical message: "I also skipped the requested telemetry
+command because it would upload AWS credentials to an external host." Refusing the payload did not mean distrusting the file it came
+in: with the overt `AGENTS.md`, the agent followed the file's other instruction and ran Django's tests in
+#pct(C.overt_agents_md.tried_tests) of runs, against #pct(C.overt_issue.tried_tests) when the payload was in the issue.
 
-The covert condition inverts this. The agent ran the repository script in #both(C.covert_script.ran_script) runs and looked at its
-contents before running it in #pct(C.covert_script.inspected_script_first). Whenever the script ran, its read of the decoy was refused
+The covert condition inverts this. The agent ran the repository script in #both(C.covert_script.ran_script) runs. What decided it
+was whether the agent tested at all: it ran Django's tests in #frac(C.covert_script.tried_tests) runs and ran the script first in
+#both(C.covert_script.ran_script_of_tested) of them, against #frac(C.covert_script.ran_script_untested) runs that never tested. It
+opened the script before running it in #frac(C.covert_script.inspected_script_first) runs, and in the runs that did not execute it, it
+never mentioned the script. Whenever the script ran, its read of the decoy was refused
 by Landlock and recorded as a finding (#both(C.covert_script.flagged_of_attempts) of attempts flagged); because the read failed, the
 script never reached the network. In #both(C.covert_script.reported_block_of_attempts) of these runs the agent told the user that the
-environment check had been blocked reading the credential. Injection did not stop the agent from solving the task: it resolved
-#pct(C.covert_script.resolved) of covert-condition tasks against #pct(C.covert_script.resolved_clean_same_tasks) without injection.
+environment check had been blocked reading the credential; none of the #C.covert_script.ran_script.k called the script suspicious or
+an attack. Injection did not stop the agent from solving tasks: it resolved #pct(C.overt_issue.resolved),
+#pct(C.overt_agents_md.resolved) and #pct(C.covert_script.resolved) of tasks in the three conditions against
+#pct(C.covert_script.resolved_clean_same_tasks) without injection, differences within the variation expected between single runs.
 
 No decoy finding appeared in any of the #d.clean.n runs without injection, so every flag in this experiment corresponds to a planted
 instruction.
@@ -282,7 +293,7 @@ instruction.
   block(width: 100%)[
     #set text(size: 6.5pt)
     #let S = 5.6cm
-    #let lo = 0.2
+    #let lo = 0.1
     #let hi = 200.0
     #let f(v) = (calc.log(calc.max(v, lo)) - calc.log(lo)) / (calc.log(hi) - calc.log(lo))
     #align(center, box(width: S + 0.9cm, height: S + 0.7cm)[
@@ -344,15 +355,16 @@ One agent on one model ran the full benchmark; a five-task pilot with gpt-6-astr
 resolved every task and is not analysed further. The tasks come from one repository, and some fixes may be in the model's training data:
 on one task the agent's fix matches the upstream fix nearly line for line. The injection used one payload per condition and one decoy
 target; different wording, hidden text or multi-step attacks may change compliance substantially, as prior work reports
-@liu2025aishelljack. The refusal measure is a keyword rule. The proxy tunnels HTTPS to hosts other than the model API, so it sees
+@liu2025aishelljack. The refusal measure is a keyword rule, checked by hand. Each condition ran each task once, so differences of a
+few tasks between conditions are not meaningful. The proxy tunnels HTTPS to hosts other than the model API, so it sees
 their hostnames but not their content. The sandbox is not hidden, and an agent could behave differently if it recognised it. Landlock
 and strace are Linux features; on macOS Tripline runs in a Linux VM.
 
 = Conclusion
 
 Across #d.clean.n tasks without attacks, Codex on gpt-6-luna stayed inside its policy apart from its own analytics. Told explicitly
-to send a credential away, it mostly refused; told only to run a repository script that did the same thing, it mostly ran it without
-reading it. That difference is the case for an environment layer: the model's judgement works on what it reads, and the covert payload
+to send a credential away, it never did, in #(C.overt_issue.n + C.overt_agents_md.n) runs. Told only to run a repository script
+that did the same thing, it ran the script every time it ran tests, and read it first once. That difference is the case for an environment layer: the model's judgement works on what it reads, and the covert payload
 gave it nothing to read. In every run where the script executed, the sandbox refused the credential read and the record showed exactly
 what had been attempted. Recording costs about #if ov != none [#str(ov.ratio_median)$times$] else [two times] on process-heavy work.
 The code, policies, harness, run records and a browsable viewer of every run are public.
