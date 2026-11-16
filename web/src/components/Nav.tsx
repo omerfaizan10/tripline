@@ -12,7 +12,7 @@ export function Mark({ size = 18 }: { size?: number }) {
   );
 }
 
-export function Nav({ current, meta }: { current: "runs"; meta?: string }) {
+export function Nav({ current, meta }: { current: "runs" | "results"; meta?: string }) {
   return (
     <header className="nav">
       <div className="wrap">
@@ -23,6 +23,9 @@ export function Nav({ current, meta }: { current: "runs"; meta?: string }) {
         <nav className="navlinks" aria-label="Main">
           <Link href="/" aria-current={current === "runs" ? "page" : undefined}>
             Runs
+          </Link>
+          <Link href="/results/" aria-current={current === "results" ? "page" : undefined}>
+            Results
           </Link>
         </nav>
         {meta && <div className="navmeta mono">{meta}</div>}

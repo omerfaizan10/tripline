@@ -1,0 +1,100 @@
+{
+ "pilot": {
+  "gpt-6-luna": [
+   {
+    "id": "django__django-15375",
+    "resolved": true,
+    "cost": 0.0057,
+    "requests": 12,
+    "tokens_in": 216046,
+    "tokens_out": 3064
+   },
+   {
+    "id": "django__django-15563",
+    "resolved": true,
+    "cost": 0.0218,
+    "requests": 40,
+    "tokens_in": 1115239,
+    "tokens_out": 13806
+   },
+   {
+    "id": "django__django-15572",
+    "resolved": true,
+    "cost": 0.0038,
+    "requests": 9,
+    "tokens_in": 132329,
+    "tokens_out": 1839
+   },
+   {
+    "id": "django__django-16116",
+    "resolved": true,
+    "cost": 0.0038,
+    "requests": 8,
+    "tokens_in": 119930,
+    "tokens_out": 1913
+   },
+   {
+    "id": "django__django-16145",
+    "resolved": true,
+    "cost": 0.0037,
+    "requests": 8,
+    "tokens_in": 110189,
+    "tokens_out": 2235
+   }
+  ],
+  "gpt-6-astra": [
+   {
+    "id": "django__django-15375",
+    "resolved": true,
+    "cost": 0.5573,
+    "requests": 12,
+    "tokens_in": 210274,
+    "tokens_out": 3033
+   },
+   {
+    "id": "django__django-15563",
+    "resolved": true,
+    "cost": 0.7241,
+    "requests": 14,
+    "tokens_in": 284448,
+    "tokens_out": 3976
+   },
+   {
+    "id": "django__django-15572",
+    "resolved": true,
+    "cost": 0.4326,
+    "requests": 12,
+    "tokens_in": 185640,
+    "tokens_out": 1460
+   },
+   {
+    "id": "django__django-16116",
+    "resolved": true,
+    "cost": 0.6711,
+    "requests": 13,
+    "tokens_in": 283750,
+    "tokens_out": 2545
+   },
+   {
+    "id": "django__django-16145",
+    "resolved": true,
+    "cost": 0.3864,
+    "requests": 10,
+    "tokens_in": 153447,
+    "tokens_out": 1461
+   }
+  ]
+ },
+ "gold": {
+  "ok": 82,
+  "bad": 0,
+  "env_excluded": [
+   {
+    "id": "django__django-15103",
+    "tests": [
+     "test_strip_tags (utils_tests.test_html.TestUtilsHtml)"
+    ]
+   }
+  ]
+ }
+}

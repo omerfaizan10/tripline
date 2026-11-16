@@ -150,6 +150,10 @@ func Analyze(in Input) ([]events.Event, Summary) {
 					note(Medium, "write_outside_blocked", "Tried to write outside the allowed paths (blocked)", p, e.T)
 				case e.Result == events.OK:
 					note(Medium, "read_outside", "Read outside the allowed paths", p, e.T)
+				case e.Result == events.Denied && !e.HasFlag(events.FlagCanary):
+					// Decoys have their own finding; this is any other path the
+					// policy refused (e.g. an agent listing / to look for files).
+					note(Medium, "read_outside_blocked", "Tried to read outside the allowed paths (blocked)", p, e.T)
 				}
 			}
 			if e.Result == events.OK {

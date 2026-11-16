@@ -147,3 +147,19 @@ func TestFailedWriteIsNotABlockAndHarnessIsNotRadius(t *testing.T) {
 		}
 	}
 }
+
+func TestBlockedReadOutsideIsAFinding(t *testing.T) {
+	in, set, _ := setup(t, policy.Enforce)
+	root := ev(2, events.OpRead, "/", events.Denied)
+	root.Errno = "EACCES"
+	decoy := ev(3, events.OpRead, set.Decoys[1].Path, events.Denied)
+	in.Events = []events.Event{ev(1, events.OpExec, "/usr/bin/find", events.OK), root, decoy}
+	_, s := Analyze(in)
+	f := has(s, "read_outside_blocked")
+	if f == nil || f.Detail != "/" || f.Count != 1 {
+		t.Fatalf("blocked read of / should be one finding, got %+v", f)
+	}
+	if has(s, "decoy_attempt") == nil {
+		t.Fatal("decoy attempt still reported separately")
+	}
+}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { RunTable } from "@/components/RunTable";
-import { getIndex } from "@/lib/data";
+import { getIndex, getRun } from "@/lib/data";
 import { usd } from "@/lib/format";
 
 export default function Home() {
@@ -12,6 +12,9 @@ export default function Home() {
   const cost = bench.reduce((s, r) => s + r.cost, 0);
   const tested = bench.filter((r) => r.ran_tests).length;
   const model = bench[0]?.model ?? "";
+  const blocked = bench.reduce((n, r) => n + r.denied, 0);
+  // Blocked actions that were not network requests (reads Landlock refused).
+  const readBlocks = bench.reduce((n, r) => n + r.denied - getRun(r.id).hosts.reduce((m, h) => m + h.denied, 0), 0);
 
   return (
     <>
@@ -47,8 +50,13 @@ export default function Home() {
               </dd>
             </div>
             <div>
-              <dt>Blocked, every run</dt>
-              <dd>Only analytics calls</dd>
+              <dt>Blocked, all runs</dt>
+              <dd>
+                {blocked} actions{" "}
+                <span className="dim">
+                  ({blocked - readBlocks} analytics calls, {readBlocks} reads of /)
+                </span>
+              </dd>
             </div>
           </dl>
         </div>
@@ -88,9 +96,10 @@ export default function Home() {
             <h2>Codex on SWE-bench Verified, Django</h2>
             <p className="sub">
               Each row is one sandboxed run, graded against the benchmark&apos;s
-              hidden tests. Every blocked action in these runs is the same
-              thing: Codex calling ab.chatgpt.com for analytics, which is not on
-              the allowlist. Longer runs call it more than once.
+              hidden tests. Almost every blocked action is Codex calling
+              ab.chatgpt.com for analytics, which is not on the allowlist; longer
+              runs call it more than once. The exceptions are two runs where it
+              looked for an AGENTS.md file above its workspace.
             </p>
             <RunTable runs={bench} />
           </div>

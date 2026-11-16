@@ -13,6 +13,7 @@
   --accent: #b42318; /* blocked, denied, decoy touched: nothing else */
   --accent-wash: #f6e4e1;
   --ok: #2d6a3e; /* resolved */
+  --ok-track: #d3e1d4; /* meter track: lighter step of the same green */
   --add-wash: #e3eee2;
   --del-wash: #f1e6e3;
 
@@ -333,6 +334,16 @@ h2 {
   background: var(--ink);
 }
 
+.tl li.pause .x {
+  font-family: var(--sans);
+  color: var(--ink-3);
+  font-style: italic;
+}
+
+.tl li.pause .rail::before {
+  background: repeating-linear-gradient(var(--rule-strong) 0 3px, transparent 3px 6px);
+}
+
 .tl li.blocked .k,
 .tl li.blocked .x {
   color: var(--accent);
@@ -583,6 +594,182 @@ footer {
   color: var(--ink-3);
 }
 
+/* ---------- results: meters ---------- */
+
+.meters {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.meters th {
+  text-align: left;
+  font-weight: 400;
+  padding: 10px 16px 10px 0;
+  width: 34%;
+  border-bottom: 1px solid var(--rule);
+}
+
+.meters td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.meters td.bar {
+  width: 46%;
+  padding-right: 16px;
+}
+
+.meters td.fig {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.meters .track {
+  display: block;
+  height: 8px;
+  background: var(--ok-track);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meters .fill {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+  border-radius: 0 4px 4px 0;
+}
+
+/* ---------- results: strip plot ---------- */
+
+.strip {
+  font-size: 14px;
+}
+
+.strip-row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 0 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.strip-row.strip-axis {
+  border-bottom: none;
+}
+
+.strip-name {
+  padding: 18px 0;
+}
+
+.strip-plot {
+  position: relative;
+  height: 60px;
+  margin-right: 24px;
+}
+
+.strip-axis .strip-plot {
+  height: 28px;
+}
+
+.strip-grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule);
+}
+
+.strip-tick {
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.strip-dot {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  display: grid;
+  place-items: center;
+}
+
+.strip-dot span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-2);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+.strip-dot:hover span,
+.strip-dot:focus-visible span {
+  background: var(--ink);
+  width: 10px;
+  height: 10px;
+}
+
+.strip-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 6px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.strip-tip .mono {
+  color: var(--bg);
+}
+
+.note {
+  font-size: 14px;
+  color: var(--ink-2);
+  max-width: 70ch;
+  margin: 16px 0 0;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 28px 0 0;
+}
+
+.kpis div {
+  border-top: 2px solid var(--ink);
+  padding-top: 10px;
+}
+
+.kpis dt {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.kpis dd {
+  margin: 4px 0 0;
+  font-size: 28px;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpis dd small {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--ink-2);
+}
+
 /* ---------- phones ---------- */
 
 @media (max-width: 720px) {
@@ -653,6 +840,46 @@ footer {
   .runs td.title {
     grid-column: 1 / -1;
     order: 3;
+  }
+
+  .kpis {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .meters th {
+    width: auto;
+  }
+
+  .meters tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    border-bottom: 1px solid var(--rule);
+    padding: 8px 0;
+  }
+
+  .meters th,
+  .meters td {
+    border: none;
+    padding: 2px 0;
+  }
+
+  .meters td.bar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: auto;
+    padding: 6px 0 0;
+  }
+
+  .strip-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strip-name {
+    padding: 12px 0 0;
+  }
+
+  .strip-plot {
+    margin: 0 12px;
   }
 
   .runs td.hide-sm,

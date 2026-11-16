@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { TimelineItem } from "@/lib/data";
-import { count, offset } from "@/lib/format";
+import { count, longDuration, offset } from "@/lib/format";
 
 const KIND: Record<TimelineItem["k"], string> = {
   start: "Start",
@@ -12,6 +12,7 @@ const KIND: Record<TimelineItem["k"], string> = {
   net: "Network",
   blocked: "Blocked",
   flag: "Flagged",
+  pause: "Paused",
 };
 
 const LONG = 120; // longer timelines show the head and tail first
@@ -22,6 +23,8 @@ function Line({ it }: { it: TimelineItem }) {
   let text: React.ReactNode = it.x;
   if (it.k === "model") {
     text = `Request to ${it.x}: ${count(it.in ?? 0)} tokens in (${count(it.cached ?? 0)} cached), ${count(it.out ?? 0)} out`;
+  } else if (it.k === "pause") {
+    text = `The host laptop slept for ${longDuration(parseFloat(it.x))}; the sandbox was paused and the agent carried on after. Not counted in the duration.`;
   } else if (it.k === "start") {
     text = `Agent started (${it.x})`;
   }

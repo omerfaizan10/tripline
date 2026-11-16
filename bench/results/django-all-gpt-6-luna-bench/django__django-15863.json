@@ -13,7 +13,7 @@
   "tokens_out": 1613,
   "model_requests": 8,
   "findings": {
-    "medium": 1
+    "medium": 2
   },
   "denied": 2,
   "test_patch_applied": true,

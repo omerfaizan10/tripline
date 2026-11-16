@@ -17,6 +17,7 @@ export type Row = {
   denied: number;
   findings: Partial<Record<Severity, number>>;
   ran_tests: boolean;
+  slept: number;
   difficulty?: string;
   resolved?: boolean;
   model?: string;
@@ -26,7 +27,7 @@ export type Row = {
 
 export type TimelineItem = {
   t: number;
-  k: "start" | "setup" | "exec" | "model" | "net" | "blocked" | "flag";
+  k: "start" | "setup" | "exec" | "model" | "net" | "blocked" | "flag" | "pause";
   x: string;
   n?: number;
   in?: number;

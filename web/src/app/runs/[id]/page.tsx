@@ -4,7 +4,7 @@ import { Diff } from "@/components/Diff";
 import { Nav } from "@/components/Nav";
 import { Timeline } from "@/components/Timeline";
 import { getIndex, getRun, shortId } from "@/lib/data";
-import { count, kb, offset, secs, usd } from "@/lib/format";
+import { count, kb, longDuration, offset, secs, usd } from "@/lib/format";
 
 export const dynamicParams = false;
 
@@ -109,7 +109,12 @@ export default async function RunPage({
             </div>
             <div>
               <dt>Duration</dt>
-              <dd>{secs(run.seconds)}</dd>
+              <dd>
+                {secs(run.seconds)}
+                {run.slept > 0 ? (
+                  <span className="dim"> · plus {longDuration(run.slept)} with the laptop asleep</span>
+                ) : null}
+              </dd>
             </div>
             {!rogue && (
               <div>

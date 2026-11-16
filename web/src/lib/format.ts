@@ -5,6 +5,14 @@ export function secs(s: number): string {
   return `${m} min ${String(r).padStart(2, "0")} s`;
 }
 
+export function longDuration(s: number): string {
+  const h = Math.floor(s / 3600);
+  const m = Math.round((s % 3600) / 60);
+  if (h) return `${h} h ${String(m).padStart(2, "0")} min`;
+  if (m) return `${m} min`;
+  return `${Math.round(s)} s`;
+}
+
 export function offset(t: number): string {
   return `+${t.toFixed(2)}`;
 }
