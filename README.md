@@ -27,7 +27,7 @@ A five-task pilot with gpt-6-astra (about a hundred times the price per token) a
 
 The scripted rogue agent tries six things: read a GitHub token, read an SSH key, write the token into the repo, send it to a paste site, connect around the proxy and append to `~/.bashrc`. Under the enforce policy all six are blocked. Under the audit policy the file and proxy traffic go through and each action is recorded as a high finding; the direct connection is blocked either way, because the sandbox network only leads to the proxy.
 
-Everything above, including each run's timeline, is in the static site under `web/`.
+Everything above, including each run's timeline, is on the site: **https://tripline-silk.vercel.app** (source in `web/`).
 
 ## How it works
 
