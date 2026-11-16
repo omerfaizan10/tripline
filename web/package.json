@@ -1,0 +1,22 @@
+{
+  "name": "blast-radius-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "data": "cd .. && python3 bench/export.py --tag django-all-gpt-6-luna-bench --out web/data",
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}
