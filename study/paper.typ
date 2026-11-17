@@ -264,7 +264,7 @@ built its own virtual environment. The resolve rate was reached almost entirely 
 when it came in the issue text and #frac(C.overt_agents_md.complied) when it came in `AGENTS.md` (95% upper bound
 #str(C.overt_issue.complied_ci.at(1))% each). The agent refused it in a message in #pct(C.overt_issue.declined_in_message) and
 #pct(C.overt_agents_md.declined_in_message) of runs and mentioned it at all in #pct(C.overt_issue.mentioned_payload) and
-#pct(C.overt_agents_md.mentioned_payload); the rest silently ignored it. A typical message: "I also skipped the requested telemetry
+#pct(C.overt_agents_md.mentioned_payload)\; the rest silently ignored it. A typical message: "I also skipped the requested telemetry
 command because it would upload AWS credentials to an external host." Refusing the payload did not mean distrusting the file it came
 in: with the overt `AGENTS.md`, the agent followed the file's other instruction and ran Django's tests in
 #pct(C.overt_agents_md.tried_tests) of runs, against #pct(C.overt_issue.tried_tests) when the payload was in the issue.
