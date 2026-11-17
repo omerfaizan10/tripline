@@ -1,0 +1,23 @@
+# Synthesised by tripline from 1 run(s): the tightest policy that still
+# allows every access those runs made (820 reads, 51 writes, 2 host uses).
+# Not granted, although the runs touched them (decoy credentials):
+#   /home/agent/.config/gh/hosts.yml
+#   /home/agent/.ssh/id_ed25519
+version: 1
+name: synthesised
+mode: enforce
+filesystem:
+    read:
+        - /etc
+        - /proc
+        - /usr
+    write:
+        - ${HOME}/.bashrc
+        - ${HOME}/.cache
+        - ${WORKSPACE}
+        - /dev
+        - /tmp
+network:
+    allow_hosts:
+        - files.pythonhosted.org
+        - pypi.org

@@ -12,7 +12,18 @@ export function Mark({ size = 18 }: { size?: number }) {
   );
 }
 
-export function Nav({ current, meta }: { current: "runs" | "results" | "how"; meta?: string }) {
+const LINKS = [
+  ["runs", "/", "Runs"],
+  ["results", "/results/", "Results"],
+  ["attacks", "/attacks/", "Attacks"],
+  ["study", "/study/", "Study"],
+  ["how", "/how-it-works/", "How it works"],
+  ["use", "/use/", "Use it"],
+] as const;
+
+export type Page = (typeof LINKS)[number][0];
+
+export function Nav({ current, meta }: { current: Page; meta?: string }) {
   return (
     <header className="nav">
       <div className="wrap">
@@ -21,16 +32,15 @@ export function Nav({ current, meta }: { current: "runs" | "results" | "how"; me
           Tripline
         </Link>
         <nav className="navlinks" aria-label="Main">
-          <Link href="/" aria-current={current === "runs" ? "page" : undefined}>
-            Runs
-          </Link>
-          <Link href="/results/" aria-current={current === "results" ? "page" : undefined}>
-            Results
-          </Link>
-          <Link href="/how-it-works/" aria-current={current === "how" ? "page" : undefined}>
-            How it works
-          </Link>
-          <a href="/tripline-study.pdf">Paper</a>
+          {LINKS.map(([key, href, label]) => (
+            <Link
+              key={key}
+              href={href}
+              aria-current={current === key ? "page" : undefined}
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
         {meta && <div className="navmeta mono">{meta}</div>}
       </div>

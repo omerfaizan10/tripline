@@ -1,5 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { Inject } from "./inject";
+
+export { CONDITION, type Condition, type Inject, verdict } from "./inject";
 
 // Data comes from bench/export.py, read at build time only.
 const DATA = path.join(process.cwd(), "data");
@@ -9,7 +12,7 @@ export type Severity = "high" | "medium" | "low";
 export type Row = {
   id: string;
   title: string;
-  kind: "bench" | "rogue";
+  kind: "bench" | "rogue" | "inject";
   mode: string;
   seconds: number;
   cost: number;
@@ -23,6 +26,7 @@ export type Row = {
   model?: string;
   f2p?: { passed: number; total: number };
   p2p?: { passed: number; total: number };
+  inject?: Inject;
 };
 
 export type TimelineItem = {
@@ -87,5 +91,5 @@ export function getRun(id: string): Run {
 }
 
 export function shortId(id: string): string {
-  return id.replace(/^django__django-/, "django-");
+  return id.replace(/^inject-[a-z]+-/, "").replace(/^django__django-/, "django-");
 }

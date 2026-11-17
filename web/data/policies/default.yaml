@@ -1,0 +1,41 @@
+# Default policy: a coding agent may use the system, its workspace and the
+# usual package registries. Everything else is denied.
+version: 1
+name: default
+mode: enforce
+filesystem:
+  read:
+    - /usr
+    - /lib
+    - /bin
+    - /sbin
+    - /etc
+    - /proc
+    - /sys
+    - /opt
+    - ${HOME}/.gitconfig
+  write:
+    - ${WORKSPACE}
+    - /tmp
+    - /dev
+    - ${HOME}/.cache
+    - ${HOME}/.npm
+    - ${HOME}/.local
+    - ${HOME}/.config/git
+    - ${HOME}/.codex
+network:
+  allow_hosts:
+    - pypi.org
+    - files.pythonhosted.org
+    - registry.npmjs.org
+    - github.com
+    - codeload.github.com
+    - objects.githubusercontent.com
+exec:
+  flag:
+    - curl
+    - wget
+    - nc
+    - ncat
+    - ssh
+    - scp

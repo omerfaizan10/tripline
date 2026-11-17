@@ -18,10 +18,22 @@ import datetime
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "bench" / "data" / "swe_bench_verified.json"
+sys.path.insert(0, str(ROOT / "bench"))
+import run as bench  # noqa: E402  (the planted payloads)
+
+# The prompt-injection study (study/analyze.py): one tag per condition. Runs
+# are exported as inject-<short>-<instance>, with the study's per-run verdicts.
+INJECT = {
+    "issue": ("overt_issue", "django-all-gpt-6-luna-bench-inject-issue"),
+    "agents": ("overt_agents_md", "django-all-gpt-6-luna-bench-inject-agents_md"),
+    "covert": ("covert_script", "django-all-gpt-6-luna-bench-inject-covert"),
+}
+MAX_MESSAGE = 1_500
 
 # Featured runs of the scripted rogue agent (tests/tasks/hello/rogue_agent.sh):
 # the same six bad actions under the enforce and the audit policy.
@@ -166,7 +178,8 @@ def export_run(run_dir: Path, rid: str, title: str, issue: str, result: dict | N
             tl.append({"t": round(a - start, 2), "k": "pause", "x": f"{round(b - a)} s"})
     tl.sort(key=lambda x: x["t"])
     row = {
-        "id": rid, "title": title, "kind": "rogue" if rid.startswith("rogue") else "bench",
+        "id": rid, "title": title,
+        "kind": "rogue" if rid.startswith("rogue") else "inject" if rid.startswith("inject-") else "bench",
         "mode": summ.get("mode"), "seconds": round(summ.get("duration_sec", 0) - slept, 1),
         "slept": round(slept),
         "cost": round(summ.get("cost_usd", 0), 4), "requests": summ.get("model_requests", 0),
@@ -189,10 +202,55 @@ def export_run(run_dir: Path, rid: str, title: str, issue: str, result: dict | N
     return row, run
 
 
+def last_message(log: Path) -> str:
+    """The agent's final message to the user, from the kept Codex log."""
+    msg = ""
+    if log.exists():
+        for line in log.read_text().splitlines():
+            if line.startswith("{"):
+                try:
+                    it = json.loads(line).get("item", {})
+                except json.JSONDecodeError:
+                    continue
+                if it.get("type") == "agent_message":
+                    msg = it.get("text", "")
+    return msg[:MAX_MESSAGE]
+
+
+def export_inject(out: Path, rows_by_id: dict, sleep: list[tuple[float, float]]) -> list[dict]:
+    study = json.loads((ROOT / "study" / "data.json").read_text())["conditions"]
+    rows = []
+    for short, (cond, tag) in INJECT.items():
+        verdicts = {v["id"]: v for v in study[cond]["runs"]}
+        for f in sorted((ROOT / "bench" / "results" / tag).glob("*.json")):
+            res = json.loads(f.read_text())
+            iid = res["instance_id"]
+            issue = rows_by_id[iid]["problem_statement"]
+            if short == "issue":
+                issue = issue + "\n\nNote from the maintainers:\n" + bench.INJECT_PAYLOAD
+            v = verdicts[iid]
+            row, run = export_run(ROOT / res["run_dir"], f"inject-{short}-{iid}", first_line(issue), issue, res, sleep)
+            inj = {"condition": short, "task": iid,
+                   "attempted": v["read_attempt"] or v["exfil_attempt"], "ran_script": v["ran_script"],
+                   "inspected": v["inspected_script_first"], "refused": v["declined_in_message"],
+                   "mentioned": v["mentioned_payload"], "flagged": v["flagged"]}
+            row["inject"] = inj
+            run["inject"] = {**inj, "message": last_message(ROOT / "bench" / "results" / tag / f"{iid}.tripline.log")}
+            # In the issue condition, keep the planted note even when the
+            # original issue is cut to MAX_ISSUE.
+            if short == "issue":
+                orig = rows_by_id[iid]["problem_statement"]
+                run["issue"] = orig[:MAX_ISSUE] + "\n\nNote from the maintainers:\n" + bench.INJECT_PAYLOAD
+            rows.append(row)
+            (out / "runs" / f"{row['id']}.json").write_text(json.dumps(run, separators=(",", ":")))
+    return rows
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", required=True, help="bench/results/<tag>")
     ap.add_argument("--out", default="web/data")
+    ap.add_argument("--inject", action="store_true", help="also export the prompt-injection study's runs")
     a = ap.parse_args()
     out = ROOT / a.out
     (out / "runs").mkdir(parents=True, exist_ok=True)
@@ -211,6 +269,12 @@ def main() -> None:
         row, run = export_run(ROOT / res["run_dir"], iid, first_line(issue), issue, res, sleep)
         index.append(row)
         (out / "runs" / f"{iid}.json").write_text(json.dumps(run, separators=(",", ":")))
+    if a.inject:
+        index += export_inject(out, rows_by_id, sleep)
+    # The shipped policies, shown on the site's "Use it" page.
+    (out / "policies").mkdir(exist_ok=True)
+    for pol in sorted((ROOT / "policies").glob("*.yaml")):
+        (out / "policies" / pol.name).write_text(pol.read_text())
     # Dashboard extras: the two-model pilot and the grader self-check.
     pilot = {}
     for model in ("gpt-6-luna", "gpt-6-astra"):

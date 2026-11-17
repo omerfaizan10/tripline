@@ -925,6 +925,114 @@ code {
   font-size: 15px;
 }
 
+/* ---------- attacks, study, use ---------- */
+
+.planted {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  padding: 12px 14px;
+  white-space: pre;
+  overflow-x: auto;
+  color: var(--ink);
+}
+
+.prose .planted,
+.prose details {
+  margin-top: 12px;
+  max-width: 82ch;
+}
+
+.said {
+  margin: 0;
+  padding: 2px 0 2px 14px;
+  border-left: 2px solid var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.featured.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.featured p + p {
+  margin-top: 8px;
+}
+
+.featured .card-fig {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 16px 0 0;
+  font-size: 15px;
+}
+
+.paper-links .cta {
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration-thickness: 2px;
+}
+
+.fig {
+  margin: 20px 0 0;
+  max-width: 420px;
+}
+
+.fig figcaption {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+
+.scatter {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.scatter .grid {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.scatter .ref {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+}
+
+.scatter .dashed {
+  stroke-dasharray: 4 3;
+}
+
+.scatter .tick {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: var(--ink-3);
+}
+
+.scatter .dot {
+  fill: var(--ink);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+  fill-opacity: 0.8;
+}
+
+.scatter .dot:hover {
+  fill: var(--accent);
+  fill-opacity: 1;
+}
+
 /* ---------- phones ---------- */
 
 @media (max-width: 720px) {
@@ -942,6 +1050,21 @@ code {
 
   .navmeta {
     display: none;
+  }
+
+  .navlinks {
+    overflow-x: auto;
+    gap: 18px;
+    scrollbar-width: none;
+    min-width: 0;
+  }
+
+  .navlinks a {
+    white-space: nowrap;
+  }
+
+  .featured.three {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .section {
